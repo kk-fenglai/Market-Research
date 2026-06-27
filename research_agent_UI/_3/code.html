@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin &amp; Settings - MarketIntel AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed-dim": "#4edea3",
+                      "on-primary": "#1000a9",
+                      "error": "#ffb4ab",
+                      "surface-tint": "#c0c1ff",
+                      "error-container": "#93000a",
+                      "on-surface": "#dae2fd",
+                      "surface-container-low": "#131b2e",
+                      "on-error-container": "#ffdad6",
+                      "secondary": "#4edea3",
+                      "outline-variant": "#464554",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "surface-dim": "#0b1326",
+                      "background": "#0b1326",
+                      "primary": "#c0c1ff",
+                      "on-secondary": "#003824",
+                      "secondary-container": "#00a572",
+                      "on-error": "#690005",
+                      "on-secondary-container": "#00311f",
+                      "surface-bright": "#31394d",
+                      "tertiary-container": "#d97721",
+                      "surface-container-high": "#222a3d",
+                      "secondary-fixed": "#6ffbbe",
+                      "inverse-primary": "#494bd6",
+                      "on-primary-fixed": "#07006c",
+                      "surface-container": "#171f33",
+                      "on-tertiary-container": "#452000",
+                      "primary-container": "#8083ff",
+                      "on-tertiary-fixed-variant": "#703700",
+                      "inverse-surface": "#dae2fd",
+                      "primary-fixed": "#e1e0ff",
+                      "on-background": "#dae2fd",
+                      "surface-container-lowest": "#060e20",
+                      "on-primary-container": "#0d0096",
+                      "on-secondary-fixed-variant": "#005236",
+                      "tertiary-fixed": "#ffdcc5",
+                      "on-surface-variant": "#c7c4d7",
+                      "tertiary": "#ffb783",
+                      "surface-container-highest": "#2d3449",
+                      "on-primary-fixed-variant": "#2f2ebe",
+                      "surface": "#0b1326",
+                      "outline": "#908fa0",
+                      "on-secondary-fixed": "#002113",
+                      "on-tertiary": "#4f2500",
+                      "surface-variant": "#2d3449",
+                      "inverse-on-surface": "#283044",
+                      "on-tertiary-fixed": "#301400",
+                      "tertiary-fixed-dim": "#ffb783"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "8px",
+                      "xl": "32px",
+                      "gutter": "20px",
+                      "md": "16px",
+                      "sm": "12px",
+                      "container-margin": "40px",
+                      "lg": "24px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "display": [
+                              "Inter"
+                      ],
+                      "data-lg": [
+                              "JetBrains Mono"
+                      ],
+                      "data-sm": [
+                              "JetBrains Mono"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-caps": [
+                              "11px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display": [
+                              "36px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "data-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "data-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(30, 41, 59, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col z-40 bg-surface-container-low border-r border-outline-variant w-64">
+<div class="p-lg border-b border-outline-variant flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+<img alt="Solo Founder Profile" class="w-full h-full object-cover" data-alt="A minimalist avatar for a solo founder in a modern tech aesthetic. Subtle geometric shapes in deep blues and bright white accents. Flat design with high contrast, no facial features, just a professional corporate symbol." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNTCRSSu1Hn0ILlKKZ2sul3FKcJn71g3eQwYStsENis-OkLfkTcAfY95SzqNkA3l3fOXIci9UBl9oUZTRlp0xKz0Ci_3HMFxgIDUeW3KU4rNd6WiIu8x_hyd644K_1QW5L_CvRkZcqnqtTvxe0ATrzo1qD7GaQK6_EV8b1Ile5ozx48kN4YqmRwf9_BDX11MCZzz8dIaa4ZZzuonGuVRHdBG2qKizVj5YYbS7qp373XT32qGPGrjQjX9RX2ipWP4jcXry7a9TiZFo"/>
+</div>
+<div>
+<h1 class="font-display text-headline-sm font-bold text-primary tracking-tight">MarketIntel AI</h1>
+<p class="font-data-sm text-data-sm text-on-surface-variant">Expert Intelligence</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-md flex flex-col gap-xs">
+<a class="text-on-surface-variant font-body-md px-md py-sm hover:bg-surface-container-highest transition-colors flex items-center gap-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="text-on-surface-variant font-body-md px-md py-sm hover:bg-surface-container-highest transition-colors flex items-center gap-sm" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Research Projects
+            </a>
+<a class="text-on-surface-variant font-body-md px-md py-sm hover:bg-surface-container-highest transition-colors flex items-center gap-sm" href="#">
+<span class="material-symbols-outlined">description</span>
+                Reports
+            </a>
+<a class="text-on-surface-variant font-body-md px-md py-sm hover:bg-surface-container-highest transition-colors flex items-center gap-sm" href="#">
+<span class="material-symbols-outlined">payments</span>
+                Billing
+            </a>
+<a class="text-secondary font-bold border-r-2 border-secondary bg-surface-container-high px-md py-sm hover:bg-surface-container-highest transition-colors flex items-center gap-sm scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+                Admin Settings
+            </a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-lg z-30 bg-background/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center">
+<h2 class="font-display text-headline-sm font-bold text-primary">MarketIntel</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="text-on-surface-variant font-data-sm text-data-sm">
+                 Credits: 1,250
+             </div>
+<button class="bg-primary text-on-primary font-body-md text-body-md px-md py-xs rounded hover:opacity-80 transition-opacity flex items-center gap-xs">
+                 New Research
+             </button>
+<div class="flex gap-sm text-on-surface-variant">
+<button class="hover:text-secondary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="hover:text-secondary transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-lg pb-xl max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Header -->
+<div class="col-span-12 mb-md">
+<h1 class="font-display text-display text-on-surface mb-xs">Admin Settings</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your account, billing, and security preferences.</p>
+</div>
+<!-- Bento Grid Layout -->
+<!-- 1. Subscription & Billing -->
+<section class="col-span-12 md:col-span-8 glass-panel rounded-lg p-lg border border-surface-variant">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary">memory</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">AI Model Routing</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">Select the default model tier for new research generation.</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Economic -->
+<label class="cursor-pointer group">
+<input class="peer sr-only" name="model_tier" type="radio"/>
+<div class="p-md rounded border border-outline-variant bg-surface-container-low hover:border-primary transition-all peer-checked:border-secondary peer-checked:bg-surface-container-high h-full flex flex-col">
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-xs">Economic</h4>
+<p class="font-data-sm text-data-sm text-on-surface-variant mb-md flex-grow">DeepSeek</p>
+<div class="font-data-lg text-data-lg text-secondary">~50<span class="text-data-sm text-on-surface-variant"> cr/run</span></div>
+</div>
+</label>
+<!-- Balanced -->
+<label class="cursor-pointer group">
+<input checked="" class="peer sr-only" name="model_tier" type="radio"/>
+<div class="p-md rounded border border-outline-variant bg-surface-container-low hover:border-primary transition-all peer-checked:border-secondary peer-checked:bg-surface-container-high h-full flex flex-col relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-secondary text-on-secondary font-label-caps text-label-caps px-2 py-1 rounded-bl">Active</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-xs">Balanced</h4>
+<p class="font-data-sm text-data-sm text-on-surface-variant mb-md flex-grow">Claude Haiku + Perplexity Sonar</p>
+<div class="font-data-lg text-data-lg text-secondary">~150<span class="text-data-sm text-on-surface-variant"> cr/run</span></div>
+</div>
+</label>
+<!-- Premium -->
+<label class="cursor-pointer group">
+<input class="peer sr-only" name="model_tier" type="radio"/>
+<div class="p-md rounded border border-outline-variant bg-surface-container-low hover:border-primary transition-all peer-checked:border-secondary peer-checked:bg-surface-container-high h-full flex flex-col">
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-xs">Premium</h4>
+<p class="font-data-sm text-data-sm text-on-surface-variant mb-md flex-grow">Claude Opus + Perplexity Pro</p>
+<div class="font-data-lg text-data-lg text-secondary">~450<span class="text-data-sm text-on-surface-variant"> cr/run</span></div>
+</div>
+</label>
+</div>
+</section>
+<!-- 3. Account Balance -->
+<section class="col-span-12 md:col-span-4 glass-panel rounded-lg p-lg border border-surface-variant flex flex-col">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Account Balance</h3>
+</div>
+<div class="flex-grow flex flex-col justify-center items-center py-xl">
+<div class="font-data-sm text-data-sm text-on-surface-variant mb-xs uppercase tracking-widest">Available Credits</div>
+<div class="font-display text-display text-primary">1,250</div>
+</div>
+<div class="border-t border-outline-variant pt-md mt-auto">
+<button class="w-full bg-surface-container-highest hover:bg-surface-bright text-on-surface font-body-md text-body-md py-sm rounded transition-colors flex justify-center items-center gap-xs border border-outline-variant">
+<span class="material-symbols-outlined text-sm">history</span>
+                    View Usage Logs
+                </button>
+</div>
+</section>
+<!-- 2. Auth Management -->
+<section class="col-span-12 md:col-span-6 glass-panel rounded-lg p-lg border border-surface-variant">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-error">security</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Authentication &amp; Security</h3>
+</div>
+<div class="space-y-md">
+<div class="p-md bg-surface-container-low rounded border border-outline-variant flex justify-between items-center">
+<div>
+<div class="font-body-md text-body-md text-on-surface font-bold">Active Sessions (JWT)</div>
+<div class="font-data-sm text-data-sm text-on-surface-variant">2 devices currently logged in.</div>
+</div>
+<button class="text-error border border-error/30 hover:bg-error/10 px-sm py-xs rounded font-label-caps text-label-caps transition-colors">
+                        Force Logout All
+                    </button>
+</div>
+<div class="p-md bg-surface-container-low rounded border border-outline-variant flex flex-col gap-sm">
+<div class="font-body-md text-body-md text-on-surface font-bold">Change Password</div>
+<input class="bg-transparent border border-outline-variant rounded p-xs font-data-sm text-data-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Current Password" type="password"/>
+<input class="bg-transparent border border-outline-variant rounded p-xs font-data-sm text-data-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="New Password" type="password"/>
+<button class="bg-primary-container text-on-primary-container font-label-caps text-label-caps py-sm rounded mt-xs hover:opacity-90 transition-opacity">
+                        Update Password
+                    </button>
+</div>
+</div>
+</section>
+<!-- 4. App Settings -->
+<section class="col-span-12 md:col-span-6 glass-panel rounded-lg p-lg border border-surface-variant">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary">api</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">System Preferences</h3>
+</div>
+<div class="space-y-md">
+<div class="p-md bg-surface-container-low rounded border border-outline-variant">
+<div class="flex justify-between items-center mb-sm">
+<div class="font-body-md text-body-md text-on-surface font-bold">API Key</div>
+<button class="text-primary hover:text-secondary transition-colors font-data-sm text-data-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">visibility</span> Reveal
+                        </button>
+</div>
+<div class="bg-surface-container-lowest p-xs rounded font-data-sm text-data-sm text-on-surface-variant flex items-center justify-between border border-surface-variant">
+<span>sk-live-********************************</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">content_copy</span></button>
+</div>
+</div>
+<div class="p-md bg-surface-container-low rounded border border-outline-variant">
+<div class="font-body-md text-body-md text-on-surface font-bold mb-sm">Export Preferences</div>
+<p class="font-data-sm text-data-sm text-on-surface-variant mb-md">Default format for raw data extracts.</p>
+<div class="flex gap-sm">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer sr-only" name="export_format" type="radio"/>
+<div class="text-center py-xs border border-outline-variant rounded font-data-sm text-data-sm text-on-surface hover:bg-surface-container-highest peer-checked:border-primary peer-checked:text-primary transition-colors">JSON</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="export_format" type="radio"/>
+<div class="text-center py-xs border border-outline-variant rounded font-data-sm text-data-sm text-on-surface hover:bg-surface-container-highest peer-checked:border-primary peer-checked:text-primary transition-colors">CSV</div>
+</label>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

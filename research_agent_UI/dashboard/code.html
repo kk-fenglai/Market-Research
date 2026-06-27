@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MarketIntel Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-primary": "#1000a9",
+                    "error": "#ffb4ab",
+                    "surface-tint": "#c0c1ff",
+                    "error-container": "#93000a",
+                    "on-surface": "#dae2fd",
+                    "surface-container-low": "#131b2e",
+                    "on-error-container": "#ffdad6",
+                    "secondary": "#4edea3",
+                    "outline-variant": "#464554",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "surface-dim": "#0b1326",
+                    "background": "#0b1326",
+                    "primary": "#c0c1ff",
+                    "on-secondary": "#003824",
+                    "secondary-container": "#00a572",
+                    "on-error": "#690005",
+                    "on-secondary-container": "#00311f",
+                    "surface-bright": "#31394d",
+                    "tertiary-container": "#d97721",
+                    "surface-container-high": "#222a3d",
+                    "secondary-fixed": "#6ffbbe",
+                    "inverse-primary": "#494bd6",
+                    "on-primary-fixed": "#07006c",
+                    "surface-container": "#171f33",
+                    "on-tertiary-container": "#452000",
+                    "primary-container": "#8083ff",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "inverse-surface": "#dae2fd",
+                    "primary-fixed": "#e1e0ff",
+                    "on-background": "#dae2fd",
+                    "surface-container-lowest": "#060e20",
+                    "on-primary-container": "#0d0096",
+                    "on-secondary-fixed-variant": "#005236",
+                    "tertiary-fixed": "#ffdcc5",
+                    "on-surface-variant": "#c7c4d7",
+                    "tertiary": "#ffb783",
+                    "surface-container-highest": "#2d3449",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "surface": "#0b1326",
+                    "outline": "#908fa0",
+                    "on-secondary-fixed": "#002113",
+                    "on-tertiary": "#4f2500",
+                    "surface-variant": "#2d3449",
+                    "inverse-on-surface": "#283044",
+                    "on-tertiary-fixed": "#301400",
+                    "tertiary-fixed-dim": "#ffb783"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "8px",
+                    "xl": "32px",
+                    "gutter": "20px",
+                    "md": "16px",
+                    "sm": "12px",
+                    "container-margin": "40px",
+                    "lg": "24px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "headline-sm": [
+                            "Inter"
+                    ],
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "display": [
+                            "Inter"
+                    ],
+                    "data-lg": [
+                            "JetBrains Mono"
+                    ],
+                    "data-sm": [
+                            "JetBrains Mono"
+                    ]
+            },
+            "fontSize": {
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-sm": [
+                            "20px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-caps": [
+                            "11px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display": [
+                            "36px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "data-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "data-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #020617; /* Level 0 Background */
+            color: #dae2fd; /* on-background */
+        }
+        
+        .card-level-1 {
+            background-color: #0f172a; /* Slightly lighter Slate */
+            border: 1px solid #1e293b;
+        }
+
+        .confidence-high {
+            background-color: rgba(16, 185, 129, 0.15); /* Emerald 15% */
+            color: #10b981; /* Emerald */
+        }
+        
+        .confidence-med {
+            background-color: #475569; /* Slate */
+            color: #ffffff;
+        }
+        
+        .confidence-low {
+            background-color: rgba(245, 158, 11, 0.15); /* Amber 15% */
+            color: #f59e0b; /* Amber */
+        }
+
+        /* Recharts mock styling */
+        .recharts-bar { fill: #c0c1ff; }
+        .recharts-bar-secondary { fill: #4edea3; }
+        .recharts-grid { stroke: #475569; stroke-dasharray: 3 3; }
+        .recharts-text { fill: #c7c4d7; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+        /* Shimmer effect for inference */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .animate-shimmer {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, #0f172a 4%, #1e293b 25%, #0f172a 36%);
+            background-size: 1000px 100%;
+        }
+
+        /* Pulse for gathering data */
+        @keyframes ring-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(73, 75, 214, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(73, 75, 214, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(73, 75, 214, 0); }
+        }
+        .pulse-ring {
+            animation: ring-pulse 2s infinite;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md bg-background text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col z-40 bg-surface-container-low dark:bg-surface-container-low h-screen w-64 border-r border-outline-variant text-primary dark:text-primary border-r border-outline-variant bg-surface-container-low hidden md:flex">
+<div class="p-lg flex items-center gap-xs">
+<div class="h-8 w-8 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A small, stylized avatar profile picture of a solo founder, rendered in a modern corporate aesthetic with high-contrast, cool lighting against a dark navy background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk9kGwYDjsz1lLLGUUqaWsa_8-HoFKmWP_kXnvIqsPWqUF6WMwS1P5B8z61sS1czYHTlzmFrZZXdISiR4Gy_OrRvKN50D-35Z-FqZrZ4NxIfGtfy6CI_pG9ZDvqqsMW4rKgyhWOJXcRLvPO7cAmlKVkWDIJ2-oMZ2UgfNoKfP2B5rD2fNYfXm3ruw7lgXmb8l0-UOC-azul0d7zI9Zf-x9T6iUWhmO9L1VPQRmR37TdNAGDOgKT8uoFmoDCO_fveOmhqy1vM7sjF0"/>
+</div>
+<div>
+<div class="font-display text-display text-primary tracking-tight text-[18px]">MarketIntel AI</div>
+<div class="font-body-md text-body-md text-[12px] text-on-surface-variant">Expert Intelligence</div>
+</div>
+</div>
+<div class="flex-1 mt-md space-y-xs flex flex-col">
+<!-- Active Tab -->
+<a class="text-secondary font-bold border-r-2 border-secondary bg-surface-container-high px-md py-sm flex items-center gap-md hover:bg-surface-container-highest transition-colors active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="text-on-surface-variant font-body-md px-md py-sm flex items-center gap-md hover:bg-surface-container-highest transition-colors active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Research Projects</span>
+</a>
+<a class="text-on-surface-variant font-body-md px-md py-sm flex items-center gap-md hover:bg-surface-container-highest transition-colors active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</a>
+<a class="text-on-surface-variant font-body-md px-md py-sm flex items-center gap-md hover:bg-surface-container-highest transition-colors active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Billing</span>
+</a>
+<a class="text-on-surface-variant font-body-md px-md py-sm flex items-center gap-md hover:bg-surface-container-highest transition-colors active:scale-95 duration-100 mt-auto mb-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Admin Settings</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-0 md:left-64 h-16 flex justify-between items-center px-lg z-30 bg-background/80 backdrop-blur-md border-b border-outline-variant text-primary dark:text-primary">
+<div class="font-display text-headline-sm font-bold text-primary md:hidden">MarketIntel</div>
+<div class="hidden md:block"></div> <!-- Spacer for flex balance -->
+<div class="flex items-center gap-lg">
+<div class="font-data-sm text-data-sm text-on-surface-variant">Credits: 1,250</div>
+<button class="bg-inverse-primary text-white font-label-caps text-label-caps px-md py-xs rounded hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95">New Research</button>
+<div class="flex items-center gap-sm">
+<button class="text-on-surface-variant hover:text-secondary transition-colors hover:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-secondary transition-colors hover:opacity-80">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-0 md:ml-64 mt-16 p-lg overflow-y-auto w-full">
+<div class="max-w-7xl mx-auto space-y-lg">
+<!-- Header Section -->
+<div class="flex justify-between items-end border-b border-outline-variant pb-md">
+<div>
+<h1 class="font-headline-sm text-headline-sm text-on-background">B2B SaaS Market Intelligence</h1>
+<p class="font-data-sm text-data-sm text-on-surface-variant mt-base">Project ID: MI-882-X | Generated: 24h ago</p>
+</div>
+<div class="flex items-center gap-xs pulse-ring text-inverse-primary">
+<span class="material-symbols-outlined text-[16px]">search</span>
+<span class="font-data-sm text-data-sm">Live Monitoring Active</span>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Exec Summary (Span 4) -->
+<div class="card-level-1 rounded-lg p-md col-span-1 md:col-span-4 flex flex-col gap-md">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant pb-xs">Executive Summary</h2>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md">Opportunity Score</span>
+<span class="font-data-lg text-data-lg text-secondary">84/100</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md">Market Maturity</span>
+<span class="font-data-lg text-data-lg text-tertiary">Emerging</span>
+</div>
+<div class="mt-auto pt-md border-t border-outline-variant">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Data Confidence</span>
+<span class="font-data-sm text-data-sm confidence-high px-sm py-base rounded-full">High &gt;80%</span>
+</div>
+</div>
+</div>
+<!-- Market Sizing (Span 8) -->
+<div class="card-level-1 rounded-lg p-md col-span-1 md:col-span-8 flex flex-col gap-md relative">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant pb-xs">Market Sizing (TAM/SAM/SOM)</h2>
+<div class="h-48 w-full flex items-end justify-around pb-md pt-lg relative">
+<!-- Mock Recharts Bar Chart -->
+<div class="absolute left-0 bottom-md h-full w-full border-b border-l border-outline-variant opacity-50 flex flex-col justify-between items-end pr-2 text-[10px] text-outline font-data-sm">
+<span>$10B</span>
+<span>$5B</span>
+<span>$0</span>
+</div>
+<div class="w-1/4 h-full bg-surface-container flex flex-col justify-end group">
+<div class="bg-primary/20 border border-primary w-full h-[90%] transition-all duration-200"></div>
+<span class="text-center mt-xs font-data-sm text-data-sm text-on-surface-variant">TAM</span>
+</div>
+<div class="w-1/4 h-full bg-surface-container flex flex-col justify-end group">
+<div class="bg-secondary/30 border border-secondary w-full h-[45%] transition-all duration-200"></div>
+<span class="text-center mt-xs font-data-sm text-data-sm text-on-surface-variant">SAM</span>
+</div>
+<div class="w-1/4 h-full bg-surface-container flex flex-col justify-end group">
+<div class="bg-inverse-primary border border-inverse-primary w-full h-[15%] transition-all duration-200"></div>
+<span class="text-center mt-xs font-data-sm text-data-sm text-on-surface-variant">SOM</span>
+</div>
+</div>
+</div>
+<!-- Pain Points (Span 6) -->
+<div class="card-level-1 rounded-lg p-md col-span-1 md:col-span-6 flex flex-col gap-md">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant pb-xs">Pain Point Frequency</h2>
+<div class="space-y-sm mt-xs">
+<!-- Heat map item -->
+<div class="flex items-center gap-sm">
+<div class="w-1/3 font-data-sm text-data-sm text-on-surface truncate" title="Integration Complexity">Integration Complexity</div>
+<div class="flex-1 bg-surface-container h-4 rounded overflow-hidden">
+<div class="bg-error/80 h-full w-[85%]"></div>
+</div>
+<div class="w-8 text-right font-data-sm text-data-sm text-error">85%</div>
+</div>
+<!-- Heat map item -->
+<div class="flex items-center gap-sm">
+<div class="w-1/3 font-data-sm text-data-sm text-on-surface truncate" title="Data Silos">Data Silos</div>
+<div class="flex-1 bg-surface-container h-4 rounded overflow-hidden">
+<div class="bg-tertiary-container/80 h-full w-[65%]"></div>
+</div>
+<div class="w-8 text-right font-data-sm text-data-sm text-tertiary-container">65%</div>
+</div>
+<!-- Heat map item -->
+<div class="flex items-center gap-sm">
+<div class="w-1/3 font-data-sm text-data-sm text-on-surface truncate" title="High Latency">High Latency</div>
+<div class="flex-1 bg-surface-container h-4 rounded overflow-hidden">
+<div class="bg-tertiary-container/60 h-full w-[45%]"></div>
+</div>
+<div class="w-8 text-right font-data-sm text-data-sm text-tertiary-container">45%</div>
+</div>
+<!-- Heat map item -->
+<div class="flex items-center gap-sm">
+<div class="w-1/3 font-data-sm text-data-sm text-on-surface truncate opacity-50" title="Poor UI">Poor UI</div>
+<div class="flex-1 bg-surface-container h-4 rounded overflow-hidden">
+<div class="bg-outline/40 h-full w-[15%]"></div>
+</div>
+<div class="w-8 text-right font-data-sm text-data-sm text-outline">15%</div>
+</div>
+</div>
+</div>
+<!-- Competitive Matrix (Span 6) -->
+<div class="card-level-1 rounded-lg p-md col-span-1 md:col-span-6 flex flex-col gap-md">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant pb-xs">Competitive Landscape Matrix</h2>
+<div class="grid grid-cols-2 gap-sm mt-xs">
+<div class="p-sm bg-surface-container rounded border border-outline-variant/50">
+<div class="font-data-sm text-data-sm text-error mb-xs flex justify-between">Competitor A <span class="material-symbols-outlined text-[14px]">trending_down</span></div>
+<div class="font-body-md text-body-md text-sm text-on-surface-variant">"Steep learning curve, rigid workflows."</div>
+</div>
+<div class="p-sm bg-surface-container-high rounded border border-secondary/50">
+<div class="font-data-sm text-data-sm text-secondary mb-xs flex justify-between">Your Edge <span class="material-symbols-outlined text-[14px]">trending_up</span></div>
+<div class="font-body-md text-body-md text-sm text-on-surface">Intuitive UX, customizable rule engines.</div>
+</div>
+<div class="p-sm bg-surface-container rounded border border-outline-variant/50">
+<div class="font-data-sm text-data-sm text-error mb-xs flex justify-between">Competitor B <span class="material-symbols-outlined text-[14px]">trending_down</span></div>
+<div class="font-body-md text-body-md text-sm text-on-surface-variant">"Pricing is opaque, lacks API depth."</div>
+</div>
+<div class="p-sm bg-surface-container-high rounded border border-secondary/50">
+<div class="font-data-sm text-data-sm text-secondary mb-xs flex justify-between">Your Edge <span class="material-symbols-outlined text-[14px]">trending_up</span></div>
+<div class="font-body-md text-body-md text-sm text-on-surface">Transparent tiered pricing, GraphQL API.</div>
+</div>
+</div>
+</div>
+<!-- Pricing Intelligence (Span 4) -->
+<div class="card-level-1 rounded-lg p-md col-span-1 md:col-span-4 flex flex-col gap-md relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-inverse-primary/10 to-transparent pointer-events-none"></div>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant pb-xs">Pricing Intelligence</h2>
+<div class="mt-sm">
+<div class="font-data-sm text-data-sm text-on-surface-variant mb-base">Recommended Range</div>
+<div class="font-display text-display text-on-background">$49 - $129<span class="text-sm font-body-md text-on-surface-variant">/mo</span></div>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-data-sm text-data-sm text-on-surface-variant">Willingness to Pay (WTP)</span>
+<span class="font-data-sm text-data-sm confidence-med px-sm py-base rounded-full">Med 65%</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded overflow-hidden flex">
+<div class="bg-outline h-full w-1/4"></div>
+<div class="bg-secondary h-full w-1/2"></div>
+<div class="bg-outline h-full w-1/4"></div>
+</div>
+<div class="flex justify-between mt-base font-data-sm text-[10px] text-outline">
+<span>Too Cheap</span>
+<span class="text-secondary">Optimal</span>
+<span>Too Expensive</span>
+</div>
+</div>
+</div>
+<!-- Sources Panel (Span 8) -->
+<div class="card-level-1 rounded-lg p-md col-span-1 md:col-span-8 flex flex-col gap-md">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant border-b border-outline-variant pb-xs flex justify-between items-center">
+<span>Data Sources Matrix</span>
+<span class="font-data-sm text-[10px] text-outline">Showing Top 3</span>
+</h2>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="font-data-sm text-data-sm text-on-surface-variant border-b border-outline-variant/30">
+<th class="py-sm font-normal">Source Type</th>
+<th class="py-sm font-normal">Reference</th>
+<th class="py-sm font-normal">Extraction Method</th>
+<th class="py-sm font-normal">Action</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-sm text-on-surface">
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container/50 transition-colors">
+<td class="py-sm"><span class="bg-surface-container px-xs py-base rounded border border-outline-variant text-xs flex items-center gap-xs w-max"><span class="material-symbols-outlined text-[14px]">link</span> Hard Source</span></td>
+<td class="py-sm font-data-sm text-data-sm text-primary">Gartner Report Q3</td>
+<td class="py-sm text-on-surface-variant">Direct PDF Parse</td>
+<td class="py-sm"><button class="text-secondary hover:text-secondary-fixed transition-colors"><span class="material-symbols-outlined text-[18px]">open_in_new</span></button></td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container/50 transition-colors">
+<td class="py-sm"><span class="bg-surface-container px-xs py-base rounded border border-outline-variant text-xs flex items-center gap-xs w-max"><span class="material-symbols-outlined text-[14px]">forum</span> User Reviews</span></td>
+<td class="py-sm font-data-sm text-data-sm text-primary">G2 / Capterra Aggregate</td>
+<td class="py-sm text-on-surface-variant">Sentiment Analysis (n=450)</td>
+<td class="py-sm"><button class="text-secondary hover:text-secondary-fixed transition-colors"><span class="material-symbols-outlined text-[18px]">open_in_new</span></button></td>
+</tr>
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-sm"><span class="bg-surface-container-high px-xs py-base rounded border border-inverse-primary/50 text-xs flex items-center gap-xs w-max text-inverse-primary"><span class="material-symbols-outlined text-[14px]">psychology</span> LLM Synthesis</span></td>
+<td class="py-sm font-data-sm text-data-sm text-primary">DeepSeek V3 Inference</td>
+<td class="py-sm text-on-surface-variant">Cross-referencing web crawls</td>
+<td class="py-sm"><button class="text-outline hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[18px]">info</span></button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

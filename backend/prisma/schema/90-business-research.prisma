@@ -1,0 +1,54 @@
+// ════════════════════════════════════════════════════════════════════════════
+// 业务模块:市场调研 (research) —— 替代 DELF 示例。
+// 一份报告 = 一个「工程」;6 步流水线的每步结果存 ResearchStep,聚合报告存 result。
+// 换业务时:删本文件 + 删 00-core.prisma User 上的 researchReports 关系。
+// ════════════════════════════════════════════════════════════════════════════
+
+enum ResearchStatus {
+  pending
+  running
+  completed
+  failed
+}
+
+enum ResearchStepStatus {
+  pending
+  running
+  completed
+  failed
+}
+
+model ResearchReport {
+  id           String         @id @default(cuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productName  String
+  coreQuestion String?
+  industry     String?
+  status       ResearchStatus @default(pending)
+  score        Int?           // 0-100 机会评分(完成后写入)
+  result       Json?          // 完整聚合报告(ResearchReport zod 结构)
+  costInputs   Json?          // 用户手动录入的成本/定价(CostInputs);null=未填
+  createdAt    DateTime       @default(now())
+  completedAt  DateTime?
+
+  steps        ResearchStep[]
+
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model ResearchStep {
+  id          String             @id @default(cuid())
+  reportId    String
+  report      ResearchReport     @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  stepNumber  Int                // 1-6
+  stepName    String
+  status      ResearchStepStatus @default(pending)
+  summary     String?
+  data        Json?              // 该步结构化结果
+  error       String?            // 失败原因
+  completedAt DateTime?
+
+  @@unique([reportId, stepNumber])
+  @@index([reportId, stepNumber])
+}

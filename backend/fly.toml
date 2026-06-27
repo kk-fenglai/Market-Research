@@ -1,0 +1,42 @@
+# Fly.io 配置 (M9 部署模块)。下次建站：把 market-research 改成你的应用名，
+# primary_region 改成最近区域（fly platform regions 查列表）。
+
+app = "market-research"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "4000"
+  # 在这台常驻机上跑后台 worker（队列/对账）。无此项队列永不消费。
+  # 纯平台骨架若无 worker 可设为 false。
+  RUN_BG_WORKERS = "true"
+
+[http_service]
+  internal_port = 4000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "20s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/api/health"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
+
+[deploy]
+  # 新版本替换运行机前先跑 Postgres 迁移（forward-only，幂等，安全）。
+  release_command = "npx prisma migrate deploy"
+
+# ─── 业务示例：持久化用户录音（换业务时按需删除）───
+# [mounts]
+#   source = "recordings_data"
+#   destination = "/app/content/recordings"

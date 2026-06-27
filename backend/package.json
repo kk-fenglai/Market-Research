@@ -1,0 +1,42 @@
+{
+  "name": "saas-starter-backend",
+  "version": "0.1.0",
+  "description": "Reusable SaaS backend (auth + payment + admin + logging) — business domain swappable",
+  "main": "src/index.js",
+  "prisma": {
+    "schema": "prisma/schema"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test": "node --test",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "seed": "node prisma/seed.js",
+    "seed:billing": "node scripts/seedBilling.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.18.0",
+    "alipay-sdk": "^4.14.0",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^8.0.5",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
+    "pino-pretty": "^13.1.3",
+    "stripe": "^22.1.0",
+    "wechatpay-axios-plugin": "^0.9.6",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "prisma": "^5.18.0"
+  }
+}

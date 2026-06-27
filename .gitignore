@@ -1,0 +1,39 @@
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.*
+!env.example
+*.log
+.DS_Store
+.vscode/
+.idea/
+Thumbs.db
+
+# SQLite local dev database (若用)
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# Build artifacts
+frontend/tsconfig.tsbuildinfo
+
+# ─── 业务示例 (business-delf) 本地资源 —— 换业务时可删 ───
+# 音频 / 录音（公开仓库勿提交，走 CDN）
+*.m4a
+*.webm
+backend/content/recordings/
+backend/content/listening-sets/**/*.mp3
+# 原始考试素材（版权，仅本地）
+backend/content/fei-samples/**/*.pdf
+backend/content/fei-samples/**/*.mp3
+!backend/content/fei-samples/**/parsed.json
+!backend/content/fei-samples/**/README.md
+
+# Agent/verification artifacts
+.playwright-mcp/
+/landing-after.png
+/*.png
+
+# Local-only progress note (contains plaintext admin password)
+迁移进度-阶段1.md

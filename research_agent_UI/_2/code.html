@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MarketIntel - Research Report</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-primary": "#1000a9",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#c0c1ff",
+                        "error-container": "#93000a",
+                        "on-surface": "#dae2fd",
+                        "surface-container-low": "#131b2e",
+                        "on-error-container": "#ffdad6",
+                        "secondary": "#4edea3",
+                        "outline-variant": "#464554",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface-dim": "#0b1326",
+                        "background": "#0b1326",
+                        "primary": "#c0c1ff",
+                        "on-secondary": "#003824",
+                        "secondary-container": "#00a572",
+                        "on-error": "#690005",
+                        "on-secondary-container": "#00311f",
+                        "surface-bright": "#31394d",
+                        "tertiary-container": "#d97721",
+                        "surface-container-high": "#222a3d",
+                        "secondary-fixed": "#6ffbbe",
+                        "inverse-primary": "#494bd6",
+                        "on-primary-fixed": "#07006c",
+                        "surface-container": "#171f33",
+                        "on-tertiary-container": "#452000",
+                        "primary-container": "#8083ff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "inverse-surface": "#dae2fd",
+                        "primary-fixed": "#e1e0ff",
+                        "on-background": "#dae2fd",
+                        "surface-container-lowest": "#060e20",
+                        "on-primary-container": "#0d0096",
+                        "on-secondary-fixed-variant": "#005236",
+                        "tertiary-fixed": "#ffdcc5",
+                        "on-surface-variant": "#c7c4d7",
+                        "tertiary": "#ffb783",
+                        "surface-container-highest": "#2d3449",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "surface": "#0b1326",
+                        "outline": "#908fa0",
+                        "on-secondary-fixed": "#002113",
+                        "on-tertiary": "#4f2500",
+                        "surface-variant": "#2d3449",
+                        "inverse-on-surface": "#283044",
+                        "on-tertiary-fixed": "#301400",
+                        "tertiary-fixed-dim": "#ffb783"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "8px",
+                        "xl": "32px",
+                        "gutter": "20px",
+                        "md": "16px",
+                        "sm": "12px",
+                        "container-margin": "40px",
+                        "lg": "24px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display": ["Inter"],
+                        "data-lg": ["JetBrains Mono"],
+                        "data-sm": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-caps": ["11px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display": ["36px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "data-lg": ["18px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "data-sm": ["12px", { "lineHeight": "1.0", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+        .glass-panel {
+            background: rgba(19, 27, 46, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(70, 69, 84, 0.4);
+        }
+        
+        .source-tag-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+        .source-tag-container:hover .source-tag-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Chart container styling to blend with dark mode */
+        .recharts-cartesian-grid-horizontal line,
+        .recharts-cartesian-grid-vertical line {
+            stroke: #464554;
+        }
+        .recharts-text {
+            fill: #c7c4d7;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex antialiased">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col z-40 bg-surface-container-low border-r border-outline-variant w-64">
+<div class="p-lg border-b border-outline-variant flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-container">psychology</span>
+</div>
+<div>
+<div class="font-display text-headline-sm font-bold text-primary tracking-tight">MarketIntel AI</div>
+<div class="font-data-sm text-data-sm text-on-surface-variant">Expert Intelligence</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-md flex flex-col gap-base px-sm">
+<a class="flex items-center gap-md px-md py-sm rounded-md text-on-surface-variant font-body-md hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-md text-on-surface-variant font-body-md hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Research Projects</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-md text-secondary font-bold border-r-2 border-secondary bg-surface-container-high transition-colors" href="#" style="transform: scale(0.95); transition-duration: 100ms;">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-md text-on-surface-variant font-body-md hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Billing</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-md text-on-surface-variant font-body-md hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Admin Settings</span>
+</a>
+</div>
+<div class="p-md border-t border-outline-variant mt-auto">
+<div class="flex items-center gap-sm">
+<img alt="Solo Founder Profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a solo founder in a modern office environment, wearing dark corporate attire, dramatic cinematic lighting emphasizing expertise and determination, high contrast, sharp focus, developer aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdoCfv5RcRJ8dciWfjGHOnX7WZNB7VKNHPcnCNRgSk4LhHhoefeeTa1YbsgGSn2WSaRZyZ6ii5Ri8VbboEIBLQoFRLlzUgYbMV17YFMHgqo7iI5edX2kUQEDRTRa3I0jwywlH3e_BZ99zL6kCsbjCADhnWlxEfZ8h2vCwAOShWq0Qu9Tih54T2cLWdULbq_RKHLojFP72NvZbVXjUdTGBSWDZMQXbBKewFkT6s4TOQHX-yx80E45WQsc5kfitM5pJFxAMy-baqCNI"/>
+<div class="flex flex-col">
+<span class="font-data-sm text-data-sm text-on-surface">Founder Account</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Pro Tier</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-lg z-30 bg-background/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex-1 flex justify-end items-center gap-md">
+<div class="hidden md:flex items-center gap-sm bg-surface-container rounded-full px-sm py-xs border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="monetization_on">monetization_on</span>
+<span class="font-data-sm text-data-sm text-on-surface-variant">Credits: 1,250</span>
+</div>
+<button class="bg-primary text-on-primary font-headline-sm text-headline-sm px-md py-xs rounded-lg hover:bg-primary-fixed transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                New Research
+            </button>
+<div class="flex items-center gap-sm border-l border-outline-variant pl-md ml-xs">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 ml-64 mt-16 p-lg lg:p-container-margin overflow-y-auto">
+<!-- Report Header -->
+<div class="max-w-5xl mx-auto mb-xl">
+<div class="flex justify-between items-start mb-md">
+<div>
+<div class="flex items-center gap-sm mb-xs">
+<span class="font-data-sm text-data-sm text-secondary bg-secondary/10 px-xs py-base rounded uppercase border border-secondary/20">Finalized Report</span>
+<span class="font-data-sm text-data-sm text-on-surface-variant">Generated: 2 hours ago</span>
+</div>
+<h1 class="font-display text-display text-on-background mb-xs">Next-Gen Developer Tools Market Analysis</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">Comprehensive breakdown of emerging trends, target developer personas, and competitive landscape vulnerabilities in the AI-assisted coding space.</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-xs px-sm py-xs bg-surface-container-high border border-outline-variant rounded-md hover:bg-surface-container-highest transition-colors font-data-sm text-data-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+                        Copy Markdown
+                    </button>
+<button class="flex items-center gap-xs px-sm py-xs bg-surface-container-high border border-outline-variant rounded-md hover:bg-surface-container-highest transition-colors font-data-sm text-data-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px]" data-icon="picture_as_pdf">picture_as_pdf</span>
+                        Export PDF
+                    </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md">
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-md">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Market Size (TAM)</div>
+<div class="font-data-lg text-data-lg text-primary">$4.2B</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-md">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-xs">YoY Growth</div>
+<div class="font-data-lg text-data-lg text-secondary">+38%</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-md">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Confidence Score</div>
+<div class="inline-flex items-center gap-xs bg-secondary/15 text-secondary px-sm py-base rounded-full font-data-sm text-data-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                        High (92%)
+                    </div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-md">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Sources Analyzed</div>
+<div class="font-data-lg text-data-lg text-on-surface">1,402</div>
+</div>
+</div>
+</div>
+<div class="max-w-5xl mx-auto grid grid-cols-1 xl:grid-cols-12 gap-lg">
+<!-- Main Content Column -->
+<div class="xl:col-span-8 space-y-lg">
+<!-- Executive Summary -->
+<section class="glass-panel rounded-xl p-lg">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-md border-b border-outline-variant pb-xs">Executive Summary</h2>
+<div class="prose prose-invert max-w-none font-body-md text-on-surface leading-relaxed">
+<p class="mb-sm">
+                            The AI developer tools market is transitioning from "novelty generation" to "workflow integration." Early adopters are experiencing significant fatigue with standalone chat interfaces, demanding deeper IDE integration and context-aware agents.
+                            <span class="inline-block relative source-tag-container ml-xs">
+<span class="inline-flex items-center gap-[2px] bg-surface-container-highest border border-outline-variant px-1 rounded text-data-sm font-data-sm text-on-surface-variant cursor-pointer hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-[14px]">link</span> [1]
+                                </span>
+</span></p><div class="source-tag-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-sm bg-surface-bright border border-outline-variant rounded shadow-lg z-50">
+<div class="font-label-caps text-label-caps text-primary mb-xs">Source Data</div>
+<div class="font-body-md text-sm text-on-surface mb-xs">StackOverflow Developer Survey 2024: 68% prefer IDE-integrated tools over external chat.</div>
+<a class="font-data-sm text-data-sm text-secondary hover:underline flex items-center gap-1" href="#">View Origin <span class="material-symbols-outlined text-[12px]">open_in_new</span></a>
+</div>
+<p></p>
+<p>
+                            Security and proprietary data privacy remain the primary blockers for enterprise adoption, creating an opening for "local-first" or heavily containerized LLM solutions. 
+                            <span class="inline-block relative source-tag-container ml-xs">
+<span class="inline-flex items-center gap-[2px] bg-surface-container-highest border border-outline-variant px-1 rounded text-data-sm font-data-sm text-on-surface-variant cursor-pointer hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-[14px]">link</span> [2]
+                                </span>
+</span>
+</p>
+</div>
+</section>
+<!-- Target Personas Bento -->
+<section>
+<h2 class="font-headline-sm text-headline-sm text-on-background mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="groups">groups</span>
+                        Target Personas
+                    </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Persona 1 -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-md flex flex-col relative overflow-hidden group hover:border-primary/50 transition-colors">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -z-10 group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex items-start justify-between mb-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">The "10x" Solo Dev</h3>
+<div class="font-data-sm text-data-sm text-on-surface-variant mt-1">Primary Segment</div>
+</div>
+<span class="material-symbols-outlined text-surface-variant text-4xl">person</span>
+</div>
+<div class="space-y-sm mt-auto">
+<div>
+<div class="font-label-caps text-label-caps text-error mb-1">Pain Point</div>
+<p class="font-body-md text-sm text-on-surface-variant">Context switching between documentation, IDE, and terminal breaks flow state.</p>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-secondary mb-1">Trigger</div>
+<p class="font-body-md text-sm text-on-surface-variant">Hitting a complex architectural roadblock requiring multiple file context.</p>
+</div>
+</div>
+</div>
+<!-- Persona 2 -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-md flex flex-col relative overflow-hidden group hover:border-primary/50 transition-colors">
+<div class="absolute top-0 right-0 w-24 h-24 bg-tertiary/5 rounded-bl-full -z-10 group-hover:bg-tertiary/10 transition-colors"></div>
+<div class="flex items-start justify-between mb-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Enterprise Tech Lead</h3>
+<div class="font-data-sm text-data-sm text-on-surface-variant mt-1">Secondary Segment</div>
+</div>
+<span class="material-symbols-outlined text-surface-variant text-4xl">admin_panel_settings</span>
+</div>
+<div class="space-y-sm mt-auto">
+<div>
+<div class="font-label-caps text-label-caps text-error mb-1">Pain Point</div>
+<p class="font-body-md text-sm text-on-surface-variant">Onboarding juniors takes too long; code review quality is inconsistent.</p>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-secondary mb-1">Trigger</div>
+<p class="font-body-md text-sm text-on-surface-variant">Quarterly push to increase team velocity without compromising security compliance.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Search Trends Chart -->
+<section class="bg-surface-container border border-outline-variant rounded-xl p-md">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-headline-sm text-headline-sm text-on-background flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="trending_up">trending_up</span>
+                            Interest Over Time
+                        </h2>
+<div class="font-data-sm text-data-sm text-on-surface-variant bg-surface-container-highest px-sm py-xs rounded">Last 12 Months</div>
+</div>
+<div class="h-64 w-full" id="trends-chart-container">
+<!-- Recharts injected here -->
+</div>
+<div class="mt-sm text-sm font-body-md text-on-surface-variant border-t border-outline-variant pt-sm flex justify-between">
+<span>Insight: Distinct spikes align with major LLM model releases.</span>
+<span class="inline-block relative source-tag-container">
+<span class="inline-flex items-center gap-[2px] text-data-sm font-data-sm text-primary cursor-pointer">
+<span class="material-symbols-outlined text-[14px]">link</span> Source: Google Trends API
+                            </span>
+</span>
+</div>
+</section>
+</div>
+<!-- Sidebar Column -->
+<div class="xl:col-span-4 space-y-lg">
+<!-- Competitive Deep Dive -->
+<section class="bg-surface-container-low border border-error/30 rounded-xl overflow-hidden">
+<div class="bg-error/10 p-md border-b border-error/20 flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-error flex items-center gap-sm">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+                            Why They Fail
+                        </h2>
+<span class="font-data-sm text-data-sm text-error-container bg-error px-2 py-1 rounded">Competitor Vulnerabilities</span>
+</div>
+<div class="p-md space-y-md">
+<!-- Competitor 1 -->
+<div>
+<div class="flex justify-between items-center mb-xs">
+<div class="font-data-lg text-data-lg text-on-surface">"Copilot X"</div>
+<div class="font-data-sm text-data-sm text-on-surface-variant">Analyzed: 450 reviews</div>
+</div>
+<div class="bg-surface-container-highest rounded p-sm border border-outline-variant border-l-2 border-l-error">
+<p class="font-body-md text-sm text-on-surface-variant italic mb-2">"It constantly hallucinates APIs that don't exist in our internal codebase. Useless for proprietary libraries."</p>
+<div class="flex gap-xs">
+<span class="bg-surface-container text-on-surface-variant font-label-caps text-[10px] px-1.5 py-0.5 rounded">Context Window</span>
+<span class="bg-surface-container text-on-surface-variant font-label-caps text-[10px] px-1.5 py-0.5 rounded">Hallucination</span>
+</div>
+</div>
+</div>
+<!-- Competitor 2 -->
+<div>
+<div class="flex justify-between items-center mb-xs">
+<div class="font-data-lg text-data-lg text-on-surface">"CodeWhisperer Y"</div>
+<div class="font-data-sm text-data-sm text-on-surface-variant">Analyzed: 320 reviews</div>
+</div>
+<div class="bg-surface-container-highest rounded p-sm border border-outline-variant border-l-2 border-l-error">
+<p class="font-body-md text-sm text-on-surface-variant italic mb-2">"The UI is clunky and disrupts my workflow. I have to switch panels just to accept a suggestion."</p>
+<div class="flex gap-xs">
+<span class="bg-surface-container text-on-surface-variant font-label-caps text-[10px] px-1.5 py-0.5 rounded">UX/UI</span>
+<span class="bg-surface-container text-on-surface-variant font-label-caps text-[10px] px-1.5 py-0.5 rounded">Latency</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Processing State (Aesthetic) -->
+<section class="border border-outline-variant rounded-xl p-md relative overflow-hidden bg-surface-container">
+<div class="absolute inset-0 z-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at 50% 50%, rgba(192, 193, 255, 0.1) 0%, transparent 70%);"></div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-md flex items-center gap-xs relative z-10">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                        Live Analysis Feed
+                    </h3>
+<div class="space-y-sm font-data-sm text-data-sm text-on-surface-variant relative z-10">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>Scraped HackerNews (last 30d)</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>Processed G2 Reviews</span>
+</div>
+<div class="flex items-center gap-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary animate-spin" style="animation-duration: 3s;">sync</span>
+<span>Monitoring GitHub Discussions...</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- React/Recharts Logic -->
+<script type="text/babel">
+        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
+
+        const data = [
+            { name: 'Jan', "AI Tools": 40, "Local LLMs": 24 },
+            { name: 'Feb', "AI Tools": 45, "Local LLMs": 28 },
+            { name: 'Mar', "AI Tools": 55, "Local LLMs": 35 },
+            { name: 'Apr', "AI Tools": 50, "Local LLMs": 40 },
+            { name: 'May', "AI Tools": 65, "Local LLMs": 45 },
+            { name: 'Jun', "AI Tools": 75, "Local LLMs": 55 },
+            { name: 'Jul', "AI Tools": 85, "Local LLMs": 60 },
+            { name: 'Aug', "AI Tools": 80, "Local LLMs": 65 },
+            { name: 'Sep', "AI Tools": 95, "Local LLMs": 75 },
+            { name: 'Oct', "AI Tools": 100, "Local LLMs": 85 },
+        ];
+
+        const CustomTooltip = ({ active, payload, label }) => {
+            if (active && payload && payload.length) {
+                return (
+                    <div className="bg-surface-bright border border-outline-variant p-sm rounded shadow-lg">
+                        <p className="font-data-sm text-on-surface mb-1">{label}</p>
+                        {payload.map((entry, index) => (
+                            <p key={index} className="font-data-sm" style={{ color: entry.color }}>
+                                {entry.name}: {entry.value}
+                            </p>
+                        ))}
+                    </div>
+                );
+            }
+            return null;
+        };
+
+        const TrendsChart = () => (
+            <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tickMargin={10} />
+                    <YAxis axisLine={false} tickLine={false} />
+                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#464554', strokeWidth: 1, strokeDasharray: '3 3' }} />
+                    <Line type="monotone" dataKey="AI Tools" stroke="#c0c1ff" strokeWidth={2} dot={false} activeDot={{ r: 6, fill: '#c0c1ff', stroke: '#0b1326', strokeWidth: 2 }} />
+                    <Line type="monotone" dataKey="Local LLMs" stroke="#4edea3" strokeWidth={2} dot={false} activeDot={{ r: 6, fill: '#4edea3', stroke: '#0b1326', strokeWidth: 2 }} />
+                </LineChart>
+            </ResponsiveContainer>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('trends-chart-container'));
+        root.render(<TrendsChart />);
+    </script>
+</body></html>

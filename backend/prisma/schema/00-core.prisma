@@ -1,0 +1,185 @@
+// ════════════════════════════════════════════════════════════════════════════
+// 核心层 schema —— 用户/鉴权/后台/日志/反馈（每个网站都要的东西，请保留）
+// 多文件 schema：本目录下所有 *.prisma 会被合并。删模块 = 删对应文件 + 删 User 上的关系行。
+// ════════════════════════════════════════════════════════════════════════════
+
+generator client {
+  provider        = "prisma-client-js"
+  // 5.x 用多文件 schema 需开启此预览特性（Prisma 6 起为 GA，可去掉本行）
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  name              String?
+  plan              String    @default("FREE")   // FREE | STANDARD | AI | AI_UNLIMITED（套餐档位在 constants/planMatrix.js 定义）
+  subscriptionEnd   DateTime?
+
+  // --- RBAC & Account status ---
+  role              String    @default("USER")   // USER | ADMIN | SUPER_ADMIN
+  status            String    @default("ACTIVE") // ACTIVE | SUSPENDED | DELETED
+  deletedAt         DateTime?                    // soft-delete timestamp
+
+  // --- Email verification ---
+  emailVerified     Boolean   @default(false)
+  emailVerifiedAt   DateTime?
+
+  // --- Free trial (one-time AI_UNLIMITED grant, no payment) ---
+  trialUsedAt       DateTime?
+
+  // --- Login telemetry ---
+  loginCount        Int       @default(0)
+  lastLoginAt       DateTime?
+  lastLoginIp       String?
+  lastLoginCountry  String?                       // ISO 3166-1 alpha-2 from CDN header at last login
+  failedLoginCount  Int       @default(0)
+  lockedUntil       DateTime?
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // --- 核心关系（保留）---
+  loginHistory          LoginHistory[]
+  resetTokens           PasswordResetToken[]
+  twoFactorTokens       TwoFactorToken[]
+  refreshTokens         RefreshToken[]
+  emailVerifications    EmailVerificationToken[]
+  adminLogs             AdminLog[]            @relation("AdminActor")
+  feedbacks             Feedback[]
+
+  // ↓↓↓ 支付模块 (10-payment.prisma) 关系 —— 不要支付时连同 10-payment.prisma 一起删 ↓↓↓
+  paymentOrders         PaymentOrder[]
+  subscriptions         Subscription[]
+  payContracts          PayContract[]
+  // ↑↑↑ 支付模块关系 ↑↑↑
+
+  // ↓↓↓ 业务模块 (90-business-research.prisma) 关系 ↓↓↓
+  researchReports       ResearchReport[]
+  // ↑↑↑ 业务模块关系 ↑↑↑
+
+  @@index([role, status])
+  @@index([plan, subscriptionEnd])
+}
+
+// ---------------- 意见箱 / Feedback (M6) ----------------
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String?                       // optional contact for anonymous submitters
+  category  String   @default("OTHER")    // SUGGESTION | BUG | CONTENT | OTHER
+  message   String
+  status    String   @default("NEW")      // NEW | READ | RESOLVED
+  adminNote String?                        // internal note / reply draft
+  pageUrl   String?
+  userAgent String?
+  ip        String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([userId])
+}
+
+// ---------------- 鉴权 token (M1) ----------------
+model RefreshToken {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash     String    @unique   // sha256 of raw refresh token
+  scope         String                // "user" | "admin"
+  parentId      String?               // previous token in rotation chain
+  ip            String?
+  userAgent     String?
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  revokedReason String?               // LOGOUT | ROTATED | REUSE_DETECTED | ADMIN_REVOKE | LOCKOUT
+  createdAt     DateTime  @default(now())
+
+  @@index([userId, scope, revokedAt])
+  @@index([expiresAt])
+}
+
+model EmailVerificationToken {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model PasswordResetToken {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String   @unique            // sha256 of token; raw only sent via email
+  expiresAt  DateTime
+  usedAt     DateTime?
+  requestedBy String?                    // USER | ADMIN:<adminId>
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model TwoFactorToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String                        // sha256 of 6-digit code
+  purpose   String   @default("ADMIN_LOGIN") // ADMIN_LOGIN | SENSITIVE_ACTION
+  expiresAt DateTime
+  usedAt    DateTime?
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([userId, purpose, expiresAt])
+}
+
+// ---------------- 后台 & 安全 (M3 / M4) ----------------
+model AdminLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  admin      User     @relation("AdminActor", fields: [adminId], references: [id])
+  action     String   // USER_UPDATE | PLAN_CHANGE | PASSWORD_RESET | SUSPEND | DELETE | IMPERSONATE | LOGIN_2FA_OK ...
+  targetType String   // USER | EXAM | SESSION | SYSTEM
+  targetId   String?
+  payload    String?  // JSON: before/after diff
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([adminId, createdAt])
+  @@index([targetType, targetId])
+}
+
+model LoginHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ip        String?
+  userAgent String?
+  success   Boolean  @default(true)
+  reason    String?  // BAD_PASSWORD | LOCKED | SUSPENDED | OK | TWO_FA_REQUIRED
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// Runtime billing / trial policy (admin-editable; falls back to env when unset).
+model AppSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}

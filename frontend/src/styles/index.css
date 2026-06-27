@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme tokens (Scheme v4 restored: Studio blue + cyan + violet, light only) */
+:root {
+  font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+  color-scheme: light;
+
+  /* Base surfaces */
+  --bg: #f6f8ff;
+  --bgElevated: rgba(255, 255, 255, 0.86);
+  --text: #0b1220;
+  --textMuted: rgba(11, 18, 32, 0.62);
+  --border: transparent;
+
+  /* Studio accents */
+  --primary: #2563eb;            /* electric blue */
+  --primaryHover: #3b82f6;
+  --accent: #22d3ee;             /* cyan */
+  --accent2: #a78bfa;            /* violet */
+
+  /* Soft primary wash for hover / subtle fill */
+  --primarySoftA: rgba(37, 99, 235, 0.10);
+  --primarySoftB: rgba(34, 211, 238, 0.00);
+
+  /* Soft shadows — rounded surfaces separated by shadow, not lines */
+  --shadowSm: 0 6px 18px rgba(15, 23, 42, 0.06);
+  --shadowMd: 0 14px 44px rgba(15, 23, 42, 0.10);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+}
+
+/* Rounded surfaces — no borders, separation via soft shadow */
+.app-surface {
+  background: var(--bgElevated);
+  border-radius: 12px;
+  box-shadow: var(--shadowSm);
+}
+
+.app-subtle-gradient {
+  background: linear-gradient(180deg, var(--primarySoftA) 0%, var(--primarySoftB) 55%);
+}
+
+.app-glass {
+  background: var(--bgElevated);
+  border-radius: 14px;
+  box-shadow: var(--shadowMd);
+}
+
+/* Quiet hero wash — light blue top fading to white */
+.app-hero-bg {
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(255, 255, 255, 0.5) 100%);
+}
+
+.passage {
+  font-family: Georgia, 'Songti SC', 'SimSun', serif;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.passage p {
+  margin-bottom: 0.75em;
+}
+
+/* Exam reading panel — sticky side-by-side on desktop, tall scroll area on phone */
+.passage-panel {
+  background: var(--bgElevated);
+  border-left: 4px solid var(--primary);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 768px) {
+  .passage-panel {
+    flex: 0 0 52%;
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 140px);
+  }
+
+  .passage-panel--mock {
+    max-height: calc(100vh - 160px);
+  }
+}
+
+@media (max-width: 767px) {
+  .passage {
+    font-size: 1.2rem;
+    line-height: 1.75;
+  }
+
+  .passage p {
+    margin-bottom: 0.65em;
+  }
+
+  .passage-panel {
+    flex: 0 0 auto;
+    max-height: 68vh;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Synthetica 深色「指挥中心」设计系统(移植自旧 市场调研 工程)
+   作用域限定在 .app-dark 内,避免影响浅色平台页(登录/后台/定价)
+   ════════════════════════════════════════════════════════════════ */
+.app-dark {
+  background-color: #0b1326; /* background */
+  color: #dae2fd; /* on-surface */
+  font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.app-dark a,
+.app-dark button {
+  transition: color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+}
+.app-dark :focus-visible {
+  outline: 2px solid #c0c1ff; /* primary */
+  outline-offset: 2px;
+}
+
+/* Level 1 卡片:略亮的 slate 面 + 1px 细描边(用色调分层,不用阴影) */
+.app-dark .card-level-1 {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+}
+
+/* 玻璃面板:仅用于需要"浮起"语义的容器 */
+.app-dark .glass-panel {
+  background: rgba(19, 27, 46, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(70, 69, 84, 0.4);
+}
+
+/* 置信度药丸:Emerald(高)/ Slate(中)/ Amber(低) */
+.app-dark .confidence-high { background-color: rgba(16, 185, 129, 0.15); color: #10b981; }
+.app-dark .confidence-med { background-color: #475569; color: #ffffff; }
+.app-dark .confidence-low { background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+
+/* 采集态:Indigo 脉冲环(Data Gathering) */
+@keyframes ring-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(73, 75, 214, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(73, 75, 214, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(73, 75, 214, 0); }
+}
+.app-dark .pulse-ring { animation: ring-pulse 2s infinite; border-radius: 50%; }
+
+/* 推理态:卡片边缘 shimmer 流光 */
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.app-dark .shimmer-border { position: relative; }
+.app-dark .shimmer-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(90deg, transparent, rgba(78, 222, 163, 0.5), transparent);
+  background-size: 200% 100%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: shimmer 3s infinite linear;
+}
+
+/* Material Symbols 图标基样式 */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-dark *,
+  .app-dark *::before,
+  .app-dark *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* 打印为 PDF:隐藏导航/操作栏,白底黑字 */
+@media print {
+  .no-print { display: none !important; }
+  .app-dark { background: #ffffff; color: #1d1d1f; }
+}
+
+/* Admin console — mobile-friendly tables and toolbars */
+.admin-content .ant-table {
+  min-width: 640px;
+}
+
+.admin-content .ant-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.admin-page-header .ant-typography {
+  margin-bottom: 0 !important;
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.admin-toolbar .ant-input-search,
+.admin-toolbar .ant-select {
+  width: 100%;
+  max-width: 260px;
+}
+
+@media (max-width: 767px) {
+  .admin-content .ant-tabs-nav {
+    margin-bottom: 12px;
+  }
+
+  .admin-content .ant-tabs-tab {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .admin-content .ant-card-head-wrapper {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-content .ant-descriptions-item-label,
+  .admin-content .ant-descriptions-item-content {
+    padding: 8px 12px !important;
+  }
+
+  .admin-content .ant-modal {
+    max-width: calc(100vw - 16px) !important;
+    margin: 8px auto !important;
+  }
+
+  .admin-content .ant-pagination {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+}
