@@ -28,7 +28,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
-      lookupLocalStorage: 'delfluent-lang',
+      lookupLocalStorage: 'market-research-lang',
     },
   });
 

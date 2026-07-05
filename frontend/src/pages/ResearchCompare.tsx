@@ -75,10 +75,10 @@ function CompareTable({ items }: { items: Loaded[] }) {
   }
 
   return (
-    <div className="card-level-1 overflow-hidden rounded-lg">
+    <div className="card-level-1 overflow-hidden rounded-xl">
       <table className="w-full text-left font-body-md text-sm">
         <thead>
-          <tr className="border-b border-outline-variant bg-surface-container">
+          <tr className="border-b border-outline-variant/60 bg-surface-container-low">
             <th className="px-md py-sm font-label-caps text-label-caps uppercase text-on-surface-variant">Metric</th>
             {items.map((it) => (
               <th key={it.id} className="px-md py-sm font-headline-sm text-headline-sm text-on-surface">{it.name}</th>

@@ -20,7 +20,7 @@ async function callPerplexityRaw(prompt) {
         return_citations: true,
       }),
     },
-    { label: 'perplexity', timeoutMs: 60000, retries: 2 }
+    { label: 'perplexity', timeoutMs: 120000, retries: 2 }
   );
   const json = await res.json();
   return {

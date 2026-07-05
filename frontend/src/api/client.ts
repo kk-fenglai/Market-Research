@@ -34,6 +34,18 @@ async function doRefresh(): Promise<string | null> {
   }
 }
 
+/**
+ * 刷新 access token(并发合并:多处同时 401 只发一次刷新)。
+ * 供非 axios 通道(如 SSE fetch)复用同一套 refresh 逻辑。
+ * @returns 新的 accessToken,或 null(refresh 也失效)。
+ */
+export async function refreshAccessToken(): Promise<string | null> {
+  if (!refreshInFlight) refreshInFlight = doRefresh();
+  const token = await refreshInFlight;
+  refreshInFlight = null;
+  return token;
+}
+
 function clearAndRedirectToLogin() {
   localStorage.removeItem(ACCESS_KEY);
   localStorage.removeItem(REFRESH_KEY);

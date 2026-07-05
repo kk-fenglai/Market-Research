@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import {
   DashboardOutlined, UserOutlined, FileTextOutlined, LogoutOutlined,
-  SafetyCertificateOutlined, HistoryOutlined, BookOutlined, CreditCardOutlined,
+  SafetyCertificateOutlined, HistoryOutlined, CreditCardOutlined,
   KeyOutlined, MenuOutlined, CommentOutlined,
 } from '@ant-design/icons';
 import { Outlet, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
@@ -26,7 +26,7 @@ export default function AdminLayout() {
   const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
-    if (!admin && localStorage.getItem('delfluent-admin-access')) {
+    if (!admin && localStorage.getItem('market-research-admin-access')) {
       fetchMe();
     }
   }, [admin, fetchMe]);
@@ -35,7 +35,7 @@ export default function AdminLayout() {
     setNavOpen(false);
   }, [location.pathname]);
 
-  if (!admin && !localStorage.getItem('delfluent-admin-access')) {
+  if (!admin && !localStorage.getItem('market-research-admin-access')) {
     return <Navigate to="/admin/login" replace />;
   }
 
@@ -47,7 +47,6 @@ export default function AdminLayout() {
   const menu = [
     { key: '/admin/dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
     { key: '/admin/users', icon: <UserOutlined />, label: '用户管理' },
-    { key: '/admin/exams', icon: <BookOutlined />, label: '套题管理' },
     { key: '/admin/payments', icon: <CreditCardOutlined />, label: '支付管理' },
     { key: '/admin/feedback', icon: <CommentOutlined />, label: '意见反馈' },
     { key: '/admin/logs', icon: <FileTextOutlined />, label: '操作审计' },

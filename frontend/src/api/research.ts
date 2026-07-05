@@ -3,6 +3,8 @@ import { api } from './client';
 // 市场调研 API 封装 + 前端消费所需的类型(镜像后端 zod 结构的子集)。
 
 export type Confidence = 'high' | 'medium' | 'low';
+// 规格项置信度比模块级多一档 inferred(推断),用于硬件「竞品内部用料/规格」这类无法查实项。
+export type SpecConfidence = 'high' | 'medium' | 'low' | 'inferred';
 export type ReportStatus = 'pending' | 'running' | 'completed' | 'failed';
 export type ResearchPlan = 'economy' | 'balanced' | 'premium';
 
@@ -19,7 +21,13 @@ export interface ResearchReport {
     maturityReason?: string; summary: string; confidence?: Confidence; citations?: string[];
   };
   competitors?: {
-    competitors: { name: string; website?: string | null; pricing: string; monthlyPriceUsd: number | null; features: string[]; acquisitionChannels: string[]; complaints?: string[] }[];
+    competitors: {
+      name: string; website?: string | null; productAnalysis?: string; pricing: string;
+      monthlyPriceUsd: number | null; features: string[]; acquisitionChannels: string[]; complaints?: string[];
+      // 硬件垂直字段(hardware 模板填充)
+      formFactor?: string; targetUser?: string; isDirect?: boolean;
+      specs?: { name: string; value: string; confidence?: SpecConfidence }[];
+    }[];
     summary: string; confidence?: Confidence; citations?: string[];
   };
   userProfile?: {
@@ -33,6 +41,10 @@ export interface ResearchReport {
     keywords: { keyword: string; points: { period: string; value: number }[] }[];
     direction: 'rising' | 'stable' | 'declining'; growthSummary: string; confidence?: Confidence; citations?: string[];
   };
+  scenarioMap?: {
+    scenarios: { name: string; description: string; servedBy?: string[]; saturation: 'crowded' | 'contested' | 'open'; note?: string }[];
+    gaps: string[]; summary: string; confidence?: Confidence; citations?: string[];
+  };
   barrier?: {
     barriers: { name: string; description: string; difficulty: 'low' | 'medium' | 'high' }[];
     overallDifficulty: 'low' | 'medium' | 'high'; summary: string;
@@ -45,7 +57,7 @@ export interface ResearchReport {
   };
   meta?: {
     dataCollectedAt: string; methodologyVersion: string; overallConfidence: Confidence;
-    template: string; plan: ResearchPlan; sourcedModuleCount: number; rerunOf?: string | null;
+    template: string; plan: ResearchPlan; sourcedModuleCount: number; moduleCount?: number; rerunOf?: string | null;
   };
 }
 

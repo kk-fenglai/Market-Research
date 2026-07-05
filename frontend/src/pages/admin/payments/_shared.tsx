@@ -201,7 +201,7 @@ export function Money({ cents, currency, className }: MoneyProps) {
 // every single time during a refund batch is annoying; we cache it inside
 // `sessionStorage` so it lives only as long as the browser tab.
 
-const PW_SESSION_KEY = 'delfluent-admin-pw-session';
+const PW_SESSION_KEY = 'market-research-admin-pw-session';
 
 interface AdminPasswordSession {
   password: string;

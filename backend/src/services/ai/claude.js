@@ -20,12 +20,12 @@ async function callClaudeRaw(prompt) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 2000,
+        max_tokens: 4096,
         system: JSON_SYSTEM,
         messages: [{ role: 'user', content: prompt }],
       }),
     },
-    { label: 'claude', timeoutMs: 60000, retries: 2 }
+    { label: 'claude', timeoutMs: 120000, retries: 2 }
   );
   const json = await res.json();
   return json.content?.[0]?.text ?? '';

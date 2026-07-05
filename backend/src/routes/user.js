@@ -45,6 +45,7 @@ router.get('/me', requireAuth, async (req, res, next) => {
           email: true,
           name: true,
           plan: true,
+          role: true,
           subscriptionEnd: true,
           trialUsedAt: true,
           createdAt: true,

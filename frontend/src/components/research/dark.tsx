@@ -1,22 +1,22 @@
 import type { ReactNode } from 'react';
 
-/** Synthetica 深色设计系统共享原子(按钮 / 输入 / 卡片)。供市场调研页面复用。 */
+/** Aura Minimalist 共享原子(按钮 / 输入 / 卡片)。供市场调研页面复用。药丸几何 + 柔和阴影。 */
 
 export function btn(variant: 'primary' | 'secondary' | 'danger' = 'secondary'): string {
   const base =
-    'inline-flex items-center justify-center gap-xs rounded-lg px-md py-xs font-data-sm text-data-sm transition-colors disabled:opacity-50 disabled:pointer-events-none';
+    'inline-flex items-center justify-center gap-xs rounded-full px-md py-xs font-data-sm text-data-sm font-semibold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none';
   const v = {
-    primary: 'bg-primary text-on-primary hover:opacity-90',
+    primary: 'bg-primary text-on-primary aura-shadow hover:opacity-90',
     secondary:
-      'border border-outline-variant bg-surface-container-high text-on-surface hover:bg-surface-container-highest',
-    danger: 'border border-error/30 text-error hover:bg-error/10',
+      'border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low',
+    danger: 'border border-outline-variant text-on-surface-variant hover:border-error hover:text-error hover:bg-error/5',
   };
   return `${base} ${v[variant]}`;
 }
 
-/** 深色输入框统一类名(focus 时描边转 primary)。 */
+/** Aura 输入框统一类名:白底药丸 + 柔和阴影,focus 时 ring。 */
 export const inputCls =
-  'w-full rounded border border-outline-variant bg-surface-container-low px-sm py-xs font-body-md text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/40 focus:border-primary';
+  'w-full rounded-full border-none bg-surface-container-lowest aura-shadow px-md py-sm font-body-md text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary/20';
 
 /** Level-1 卡片面板,顶部带 label-caps 小标题 + 底部细描边。 */
 export function Panel({
@@ -31,9 +31,9 @@ export function Panel({
   children: ReactNode;
 }) {
   return (
-    <div className={`card-level-1 flex flex-col gap-md rounded-lg p-md ${span}`}>
+    <div className={`card-level-1 flex flex-col gap-md rounded-xl p-lg ${span}`}>
       {title && (
-        <h2 className="flex items-center justify-between border-b border-outline-variant pb-xs font-label-caps text-label-caps uppercase text-on-surface-variant">
+        <h2 className="ios-hairline flex items-center justify-between pb-sm font-label-caps text-label-caps uppercase text-on-surface-variant">
           <span>{title}</span>
           {aside}
         </h2>

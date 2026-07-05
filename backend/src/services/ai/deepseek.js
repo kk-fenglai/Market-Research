@@ -21,7 +21,7 @@ async function callDeepSeekRaw(prompt) {
         response_format: { type: 'json_object' },
       }),
     },
-    { label: 'deepseek', timeoutMs: 60000, retries: 2 }
+    { label: 'deepseek', timeoutMs: 120000, retries: 2 }
   );
   const json = await res.json();
   return json.choices?.[0]?.message?.content ?? '';

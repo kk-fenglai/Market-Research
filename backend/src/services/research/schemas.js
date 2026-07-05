@@ -54,14 +54,28 @@ const MarketSizeResult = z.object({
 });
 
 // ── Step 2:竞品分析 ──
+// 规格项置信度比模块级多一档 inferred(推断):用于「竞品用了什么料/内部规格」
+// 这类无法查实、只能从公开信息推断的项。UI/导出必须把 inferred 与查实项视觉隔离(PRD §7.5/§9.3)。
+const SpecConfidence = z.enum(['high', 'medium', 'low', 'inferred']);
+const CompetitorSpec = z.object({
+  name: z.string(),                              // 规格项,如「屏幕」「续航」「主控」「接口」
+  value: z.string(),                             // 取值
+  confidence: SpecConfidence.default('medium'),  // inferred=推断,非查实
+});
 const Competitor = z.object({
   name: z.string(),
   website: z.string().nullable().optional().default(null),
+  productAnalysis: z.string().optional().default(''),
   pricing: z.string(),
   monthlyPriceUsd: z.number().nullable(),
   features: z.array(z.string()),
   acquisitionChannels: z.array(z.string()),
   complaints: z.array(z.string()).default([]),
+  // ── 硬件垂直字段(hardware 模板填充;其余模板留空,向后兼容)──
+  formFactor: z.string().optional().default(''),    // 形态(尺寸/材质/装配方式)
+  targetUser: z.string().optional().default(''),    // 目标人群
+  isDirect: z.boolean().optional().default(false),  // 是否直接竞品(报告页高亮)
+  specs: z.array(CompetitorSpec).default([]),        // 结构化规格 → 差异化对比矩阵
 });
 const CompetitorResult = z.object({
   competitors: z.array(Competitor),
@@ -96,6 +110,24 @@ const TrendResult = z.object({
   keywords: z.array(KeywordTrend),
   direction: z.enum(['rising', 'stable', 'declining']),
   growthSummary: z.string(),
+  confidence: Confidence.default('medium'),
+  citations: z.array(z.string()).default([]),
+});
+
+// ── 使用场景地图(hardware 模板专属采集步) ──
+// 把「这个品类有哪些使用场景、谁在打、哪儿还空着」画成地图,直接导出市场缺口(PRD §7.4)。
+const ScenarioSaturation = z.enum(['crowded', 'contested', 'open']); // 拥挤 / 竞争 / 空白
+const Scenario = z.object({
+  name: z.string(),                                   // 场景名,如「桌面摆放·看天气」
+  description: z.string(),                             // 场景描述
+  servedBy: z.array(z.string()).default([]),          // 哪些竞品/产品在打这个场景
+  saturation: ScenarioSaturation.default('contested'),
+  note: z.string().optional().default(''),
+});
+const ScenarioMapResult = z.object({
+  scenarios: z.array(Scenario).default([]),
+  gaps: z.array(z.string()).default([]),              // 未被满足的场景/差异化切口候选
+  summary: z.string(),
   confidence: Confidence.default('medium'),
   citations: z.array(z.string()).default([]),
 });
@@ -163,6 +195,7 @@ const ReportMeta = z.object({
   template: ResearchTemplate.default('generic'),
   plan: ResearchPlan.default('economy'),
   sourcedModuleCount: z.number().default(0),
+  moduleCount: z.number().default(4),   // 采集模块总数(hardware 含场景图 = 5)
   rerunOf: z.string().nullable().default(null),
 });
 
@@ -175,6 +208,7 @@ const ResearchReport = z.object({
   competitors: CompetitorResult.optional(),
   userProfile: UserProfileResult.optional(),
   trend: TrendResult.optional(),
+  scenarioMap: ScenarioMapResult.optional(),
   barrier: BarrierResult.optional(),
   conclusion: ConclusionResult.optional(),
   meta: ReportMeta.optional(),
@@ -189,8 +223,10 @@ module.exports = {
   ResearchInput,
   MarketSizeResult,
   CompetitorResult,
+  SpecConfidence,
   UserProfileResult,
   TrendResult,
+  ScenarioMapResult,
   BarrierResult,
   ConclusionDraft,
   ConclusionResult,

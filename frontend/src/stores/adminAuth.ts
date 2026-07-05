@@ -79,6 +79,6 @@ export const useAdminAuth = create<AdminAuthState>()(
 
       clearPending: () => set({ pendingToken: null }),
     }),
-    { name: 'delfluent-admin-auth', partialize: (s) => ({ admin: s.admin }) }
+    { name: 'market-research-admin-auth', partialize: (s) => ({ admin: s.admin }) }
   )
 );

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Row, Col, Card, Statistic, Typography, Spin, Tag, Progress } from 'antd';
 import {
-  UserOutlined, CrownOutlined, DollarCircleOutlined, RiseOutlined,
-  ExperimentOutlined, StopOutlined,
+  UserOutlined, CrownOutlined, DollarCircleOutlined, RiseOutlined, StopOutlined,
 } from '@ant-design/icons';
 import { adminApi } from '../../api/adminClient';
 
@@ -73,7 +72,7 @@ export default function AdminDashboard() {
       </Row>
 
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-        <Col xs={24} lg={12}>
+        <Col xs={24}>
           <Card title="套餐分布">
             {Object.entries(stats.planDistribution).map(([plan, count]: any) => (
               <div key={plan} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
@@ -83,18 +82,6 @@ export default function AdminDashboard() {
                 <strong>{count}</strong>
               </div>
             ))}
-          </Card>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Card title="练习活跃度">
-            <Row gutter={16}>
-              <Col span={12}>
-                <Statistic title="近 7 日 Session" value={stats.sessions.last7d} prefix={<ExperimentOutlined />} />
-              </Col>
-              <Col span={12}>
-                <Statistic title="累计 Session" value={stats.sessions.total} />
-              </Col>
-            </Row>
           </Card>
         </Col>
       </Row>

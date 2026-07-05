@@ -151,7 +151,7 @@ export default function Pricing() {
         days: data?.trial?.days ?? trialDays ?? 0,
         plan: data?.trial?.plan ? t(`plan.${data.trial.plan}`) : trialPlanLabel,
       }));
-      navigate('/practice');
+      navigate('/projects');
     } catch (e: unknown) {
       const err = e as { response?: { data?: { error?: string; code?: string } } };
       const code = err.response?.data?.code;
@@ -331,7 +331,7 @@ export default function Pricing() {
                 })}
                 action={(
                   <Space>
-                    <Button size="small" onClick={() => navigate('/practice')}>
+                    <Button size="small" onClick={() => navigate('/projects')}>
                       {t('pricing.trial.goPractice')}
                     </Button>
                   </Space>

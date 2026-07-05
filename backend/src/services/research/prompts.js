@@ -69,15 +69,65 @@ function buildMarketSizePrompt(input) {
 }
 
 function buildCompetitorPrompt(input) {
-  return [
-    `针对【${subjectLine(input)}】识别 5-10 个主要竞品。`,
+  const hardware = input.template === 'hardware';
+  const lines = [
+    `针对【${subjectLine(input)}】识别 ${hardware ? '6-10' : '5-10'} 个主要竞品。`,
     '每个竞品给出:名称、官方网站完整 URL(website,以 https:// 开头;不确定则填 null,不要编造)、定价描述、可估算的月费(美元;免费或未知填 null)、核心功能、主要获客渠道。',
+    '并对每个竞品写一段「产品分析」productAnalysis(2-4 句):它是做什么的、目标用户、核心卖点/差异化、以及明显短板,要具体、可对比,而非套话。',
     '并从评论区/社媒/论坛提取该竞品最常被用户抱怨的 1-3 条差评点(complaints),这是差异化切入口;查不到则留空数组。',
+  ];
+  if (hardware) {
+    lines.push(
+      '【硬件专项】这是一个硬件/智能设备品类,额外为每个竞品填:',
+      '- formFactor:产品形态(尺寸/材质/装配/供电方式等一句话概括);',
+      '- targetUser:目标人群(谁买、用在哪);',
+      '- isDirect:是否与用户想做的产品构成直接竞品(true/false),只对真正同品类同定位的标 true;',
+      '- specs:结构化规格数组,用于横向对比矩阵。各竞品请尽量对齐相同的规格项名(name),便于成表。',
+      '  典型规格项:屏幕/显示、主控芯片(MCU/SoC)、连接(Wi-Fi/BLE/Zigbee 等)、电池/续航、传感器、接口、尺寸重量等(按品类取相关项)。',
+      '  每条规格标 confidence:high/medium/low=来自官方规格或可靠来源;inferred=查不到、仅从公开信息推断(如「竞品内部用什么料/BOM」一律 inferred,严禁伪装成查实)。',
+      sourcingRule(),
+      jsonRule(`{
+  "competitors": [
+    { "name": string, "website": string | null, "productAnalysis": string, "pricing": string, "monthlyPriceUsd": number | null, "features": string[], "acquisitionChannels": string[], "complaints": string[],
+      "formFactor": string, "targetUser": string, "isDirect": boolean,
+      "specs": [ { "name": string, "value": string, "confidence": "high" | "medium" | "low" | "inferred" } ] }
+  ],
+  "summary": string,
+  "confidence": "high" | "medium" | "low",
+  "citations": string[]
+}`),
+    );
+    return lines.join('\n');
+  }
+  lines.push(
     sourcingRule(),
     jsonRule(`{
   "competitors": [
-    { "name": string, "website": string | null, "pricing": string, "monthlyPriceUsd": number | null, "features": string[], "acquisitionChannels": string[], "complaints": string[] }
+    { "name": string, "website": string | null, "productAnalysis": string, "pricing": string, "monthlyPriceUsd": number | null, "features": string[], "acquisitionChannels": string[], "complaints": string[] }
   ],
+  "summary": string,
+  "confidence": "high" | "medium" | "low",
+  "citations": string[]
+}`),
+  );
+  return lines.join('\n');
+}
+
+function buildScenarioMapPrompt(input) {
+  return [
+    `针对【${subjectLine(input)}】绘制「使用场景地图」:这个硬件品类被用在哪些真实场景,以及每个场景的竞争饱和度。`,
+    '识别 4-7 个有区分度的使用场景(scenario),每个给出:',
+    '- name:场景名;description:用户在这个场景里要解决什么、怎么用;',
+    '- servedBy:目前主要由哪些产品/竞品在打这个场景(名称数组,查不到留空);',
+    '- saturation:该场景竞争饱和度 —— crowded(已拥挤,多家在抢)/ contested(有人做但仍有空间)/ open(基本空白,机会区);',
+    '- note:一句话补充(为何拥挤/为何空白)。',
+    '最后在 gaps 列出 2-4 条「尚未被很好满足的场景或人群」——这是差异化切口的候选,务必具体、可执行,而非套话。',
+    sourcingRule(),
+    jsonRule(`{
+  "scenarios": [
+    { "name": string, "description": string, "servedBy": string[], "saturation": "crowded" | "contested" | "open", "note": string }
+  ],
+  "gaps": string[],
   "summary": string,
   "confidence": "high" | "medium" | "low",
   "citations": string[]
@@ -153,6 +203,9 @@ function buildConclusionPrompt(input, data) {
     '总分由系统按固定权重自动计算,你不要输出总分。再给出一句话结论、建议进入策略、风险提示。',
     '给出明确决策信号 recommendation(go=值得进入 / conditional_go=有条件进入 / no_go=不建议),',
     '并在 conditions 列出 2-4 条触发条件或止损线(如「若 6 个月内 CAC 高于 X 则放弃」),让结论可执行。',
+    input.template === 'hardware'
+      ? 'entryStrategy 第一条必须是明确的「差异化切口」:结合上文使用场景地图里 saturation=open/contested 的场景与 gaps,指出该从哪个场景/人群切入、用什么差异点(规格/形态/定价/渠道)避开红海。'
+      : '',
     '若某维度数据不足,给出保守分数并在 reason 说明,不要凭空乐观。',
     jsonRule(`{
   "factors": [ { "name": string, "score": number, "reason": string } ],
@@ -171,6 +224,7 @@ module.exports = {
   buildCompetitorPrompt,
   buildUserProfilePrompt,
   buildTrendPrompt,
+  buildScenarioMapPrompt,
   buildBarrierPrompt,
   buildConclusionPrompt,
 };

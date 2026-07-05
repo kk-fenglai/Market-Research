@@ -1,8 +1,8 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { apiBaseUrl } from './baseUrl';
 
-export const ADMIN_TOKEN_KEY = 'delfluent-admin-access';
-export const ADMIN_REFRESH_KEY = 'delfluent-admin-refresh';
+export const ADMIN_TOKEN_KEY = 'market-research-admin-access';
+export const ADMIN_REFRESH_KEY = 'market-research-admin-refresh';
 
 export const adminApi = axios.create({
   baseURL: `${apiBaseUrl()}/admin`,

@@ -42,6 +42,7 @@ const reconcile = require('./services/payments/reconcile');
 // 业务模块:市场调研(research)
 // ─────────────────────────────────────────────────────────────────────────
 const researchRoutes = require('./routes/research');
+const chatRoutes = require('./routes/chat');
 
 const app = express();
 
@@ -183,6 +184,7 @@ app.use('/api/pay/contracts', payUserLimiter, payContractRoutes);
 // 业务 API:市场调研(research)—— 全部需登录(requireAuth)
 // ═════════════════════════════════════════════════════════════════════════
 app.use('/api/research', requireAuth, researchRoutes);
+app.use('/api/chat', requireAuth, chatRoutes);
 
 // ═════════════════════════════════════════════════════════════════════════
 // ADMIN API（M3 后台）—— ipAllowlist 之后是各后台子路由

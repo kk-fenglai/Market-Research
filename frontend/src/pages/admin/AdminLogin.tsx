@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Form, Input, Button, Typography, Alert, Space, Steps } from 'antd';
+import { Card, Form, Input, Button, Typography, Alert, Space, Steps, ConfigProvider } from 'antd';
 import { LockOutlined, MailOutlined, SafetyOutlined } from '@ant-design/icons';
 import { Link, useLocation, useNavigate, type Location } from 'react-router-dom';
 import { useAdminAuth } from '../../stores/adminAuth';
@@ -43,15 +43,35 @@ export default function AdminLogin() {
   };
 
   return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#2e3132',
+          colorInfo: '#2e3132',
+          borderRadius: 24,
+          controlHeight: 44,
+          fontFamily: "'Hanken Grotesk','Inter',system-ui,sans-serif",
+        },
+      }}
+    >
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg,#1e293b 0%,#7f1d1d 100%)',
+      background: 'radial-gradient(1200px 600px at 50% 30%, #ffffff 0%, #f1f2f3 55%, #e9eaeb 100%)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
     }}>
-      <Card className="w-full max-w-[420px]" style={{ boxShadow: '0 10px 40px rgba(0,0,0,0.3)' }}>
+      <Card
+        className="w-full max-w-[420px]"
+        style={{ borderRadius: 22, border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04)' }}
+        styles={{ body: { padding: 32 } }}
+      >
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <SafetyOutlined style={{ fontSize: 48, color: '#dc2626' }} />
-          <Title level={3} style={{ marginTop: 12, marginBottom: 4 }}>管理员登录</Title>
+          <div style={{
+            width: 72, height: 72, margin: '0 auto 12px', borderRadius: '50%',
+            background: '#e7e8e9', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <SafetyOutlined style={{ fontSize: 30, color: '#191c1d' }} />
+          </div>
+          <Title level={3} style={{ marginTop: 0, marginBottom: 4, color: '#191c1d' }}>管理员登录</Title>
           <Text type="secondary">市场调研 · MarketIntel Admin</Text>
         </div>
 
@@ -67,12 +87,12 @@ export default function AdminLogin() {
         {step === 0 && (
           <Form layout="vertical" onFinish={onPassword} autoComplete="off">
             <Form.Item name="email" label="邮箱" rules={[{ required: true, type: 'email' }]}>
-              <Input prefix={<MailOutlined />} placeholder="admin@yourdomain.com" size="large" />
+              <Input prefix={<MailOutlined />} placeholder="admin@yourdomain.com" size="large" style={{ borderRadius: 9999 }} />
             </Form.Item>
             <Form.Item name="password" label="密码" rules={[{ required: true }]}>
-              <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" />
+              <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" style={{ borderRadius: 9999 }} />
             </Form.Item>
-            <Button type="primary" htmlType="submit" block size="large" loading={loading} danger>
+            <Button type="primary" htmlType="submit" block size="large" loading={loading} style={{ borderRadius: 9999, height: 48, fontWeight: 600 }}>
               下一步
             </Button>
             <div style={{ marginTop: 16, textAlign: 'center' }}>
@@ -106,10 +126,10 @@ export default function AdminLogin() {
               rules={[{ required: true, len: 6, pattern: /^\d{6}$/ }]}
             >
               <Input size="large" maxLength={6} placeholder="123456" autoFocus
-                style={{ letterSpacing: 8, fontSize: 22, textAlign: 'center' }} />
+                style={{ letterSpacing: 8, fontSize: 22, textAlign: 'center', borderRadius: 9999 }} />
             </Form.Item>
             <Space direction="vertical" style={{ width: '100%' }}>
-              <Button type="primary" htmlType="submit" block size="large" loading={loading} danger>
+              <Button type="primary" htmlType="submit" block size="large" loading={loading} style={{ borderRadius: 9999, height: 48, fontWeight: 600 }}>
                 验证并登录
               </Button>
               <Button block type="link" onClick={() => { clearPending(); setStep(0); }}>
@@ -124,5 +144,6 @@ export default function AdminLogin() {
         </div>
       </Card>
     </div>
+    </ConfigProvider>
   );
 }

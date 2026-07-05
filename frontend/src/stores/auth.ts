@@ -62,6 +62,6 @@ export const useAuthStore = create<AuthState>()(
         } catch { /* ignore */ }
       },
     }),
-    { name: 'delfluent-auth', partialize: (s) => ({ user: s.user }) }
+    { name: 'market-research-auth', partialize: (s) => ({ user: s.user }) }
   )
 );

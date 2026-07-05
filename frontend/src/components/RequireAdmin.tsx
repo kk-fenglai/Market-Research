@@ -5,7 +5,7 @@ import { useAdminAuth } from '../stores/adminAuth';
 export default function RequireAdmin({ children }: { children: JSX.Element }) {
   const location = useLocation();
   const { admin, fetchMe } = useAdminAuth();
-  const hasToken = !!localStorage.getItem('delfluent-admin-access');
+  const hasToken = !!localStorage.getItem('market-research-admin-access');
 
   useEffect(() => {
     if (!admin && hasToken) fetchMe();

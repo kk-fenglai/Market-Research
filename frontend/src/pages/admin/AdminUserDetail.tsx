@@ -14,11 +14,6 @@ interface Detail {
     id: string; ip?: string; userAgent?: string; success: boolean;
     reason?: string; createdAt: string;
   }>;
-  sessions: Array<{
-    id: string; examSetId: string; examSet?: { title: string };
-    startedAt: string; completedAt?: string; totalScore?: number; maxScore?: number;
-  }>;
-  attemptCount: number;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -83,7 +78,6 @@ export default function AdminUserDetail() {
           <Descriptions.Item label="软删除时间">
             {u.deletedAt ? new Date(u.deletedAt).toLocaleString() : '—'}
           </Descriptions.Item>
-          <Descriptions.Item label="累计答题">{data.attemptCount}</Descriptions.Item>
         </Descriptions>
       </Card>
 
@@ -100,24 +94,6 @@ export default function AdminUserDetail() {
             },
             { title: 'IP', dataIndex: 'ip' },
             { title: 'User-Agent', dataIndex: 'userAgent', ellipsis: true },
-          ]}
-        />
-      </Card>
-
-      <Card title="最近练习会话">
-        <Table
-          rowKey="id" size="small" dataSource={data.sessions} pagination={false}
-          columns={[
-            { title: '套题', render: (_, r) => r.examSet?.title || r.examSetId },
-            { title: '开始', dataIndex: 'startedAt', render: (d: string) => new Date(d).toLocaleString() },
-            {
-              title: '完成', dataIndex: 'completedAt',
-              render: (d?: string) => d ? new Date(d).toLocaleString() : <Tag>未完成</Tag>,
-            },
-            {
-              title: '得分', render: (_, r) =>
-                r.totalScore != null ? `${r.totalScore} / ${r.maxScore}` : '—',
-            },
           ]}
         />
       </Card>

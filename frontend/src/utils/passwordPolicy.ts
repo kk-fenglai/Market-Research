@@ -14,7 +14,7 @@ const COMMON_WEAK = new Set([
   'football', 'baseball', 'starwars',
   'sunshine', 'trustno1', 'passw0rd1',
   'azerty', 'azerty123',
-  'delfluent', 'delfluent123', 'changeme', 'changeme123',
+  'changeme', 'changeme123',
   'motdepasse', 'bonjour123',
 ]);
 

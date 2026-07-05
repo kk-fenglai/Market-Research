@@ -14,9 +14,11 @@ const Register = lazy(() => import('./pages/Register'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 // 业务页面:市场调研(research)
 const Projects = lazy(() => import('./pages/Projects'));
+const Library = lazy(() => import('./pages/Library'));
 const ResearchNew = lazy(() => import('./pages/ResearchNew'));
 const ProjectWorkspace = lazy(() => import('./pages/ProjectWorkspace'));
 const ResearchCompare = lazy(() => import('./pages/ResearchCompare'));
+const Chat = lazy(() => import('./pages/Chat'));
 const Orders = lazy(() => import('./pages/Orders'));
 const StripeCheckoutReturn = lazy(() => import('./pages/StripeCheckoutReturn'));
 const StripeEmbeddedCheckout = lazy(() => import('./pages/StripeEmbeddedCheckout'));
@@ -99,6 +101,8 @@ export default function App() {
         {/* --- 市场调研业务路由:MarketIntel 深色外壳(独立于 AntD AppLayout) --- */}
         <Route element={<ResearchLayout />}>
           <Route path="/projects" element={<Projects />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/chat" element={<Chat />} />
           <Route path="/research/new" element={<ResearchNew />} />
           <Route path="/research/compare" element={<ResearchCompare />} />
           <Route path="/research/:id" element={<ProjectWorkspace />} />

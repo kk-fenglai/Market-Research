@@ -63,7 +63,7 @@ export default function VerifyEmail() {
                 <Button type="primary">{t('auth.verify.toLogin')}</Button>
               </Link>
               {(trialStarted || resultQS === 'ok') && (
-                <Button onClick={() => navigate('/practice')}>{t('pricing.trial.goPractice')}</Button>
+                <Button onClick={() => navigate('/projects')}>{t('pricing.trial.goPractice')}</Button>
               )}
             </div>
           )}

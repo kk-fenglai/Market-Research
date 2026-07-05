@@ -58,108 +58,125 @@ body {
   background: linear-gradient(180deg, var(--bg) 0%, rgba(255, 255, 255, 0.5) 100%);
 }
 
-.passage {
-  font-family: Georgia, 'Songti SC', 'SimSun', serif;
-  font-size: 1.0625rem;
-  line-height: 1.8;
-}
-
-.passage p {
-  margin-bottom: 0.75em;
-}
-
-/* Exam reading panel — sticky side-by-side on desktop, tall scroll area on phone */
-.passage-panel {
-  background: var(--bgElevated);
-  border-left: 4px solid var(--primary);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-@media (min-width: 768px) {
-  .passage-panel {
-    flex: 0 0 52%;
-    position: sticky;
-    top: 80px;
-    max-height: calc(100vh - 140px);
-  }
-
-  .passage-panel--mock {
-    max-height: calc(100vh - 160px);
-  }
-}
-
-@media (max-width: 767px) {
-  .passage {
-    font-size: 1.2rem;
-    line-height: 1.75;
-  }
-
-  .passage p {
-    margin-bottom: 0.65em;
-  }
-
-  .passage-panel {
-    flex: 0 0 auto;
-    max-height: 68vh;
-  }
-}
 
 /* ════════════════════════════════════════════════════════════════
-   Synthetica 深色「指挥中心」设计系统(移植自旧 市场调研 工程)
-   作用域限定在 .app-dark 内,避免影响浅色平台页(登录/后台/定价)
+   Aura Minimalist 浅色设计系统(替代旧 Synthetica 深色)
+   作用域仍限定在 .app-dark(类名沿用以免改所有 wrapper),
+   但视觉全部翻成浅色:白底抬升面 + 柔和环境阴影分层,药丸几何。
    ════════════════════════════════════════════════════════════════ */
 .app-dark {
-  background-color: #0b1326; /* background */
-  color: #dae2fd; /* on-surface */
-  font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8f9fa; /* background */
+  color: #191c1d; /* on-surface */
+  font-family: 'Hanken Grotesk', 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 .app-dark a,
 .app-dark button {
-  transition: color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease,
+    transform 0.2s ease, box-shadow 0.2s ease;
 }
 .app-dark :focus-visible {
-  outline: 2px solid #c0c1ff; /* primary */
+  outline: 2px solid rgba(93, 95, 95, 0.5); /* primary */
   outline-offset: 2px;
 }
 
-/* Level 1 卡片:略亮的 slate 面 + 1px 细描边(用色调分层,不用阴影) */
+/* Aura 环境阴影:多层极低透明度,模拟自然光下的物理抬升 */
+.aura-shadow {
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04), 0px 2px 4px rgba(0, 0, 0, 0.02);
+}
+/* 交互卡片:hover 时阴影扩散 + 轻微放大,提供触感反馈 */
+.aura-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.aura-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* ── iOS 风格组件(sample:先在 Dashboard 落地)────────────────
+   卡片:更大连续圆角 + 更柔的浮起阴影;分割线:0.5px 发丝线(可左侧内缩)。 */
+.ios-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+/* 发丝分割线:1px 线 + scaleY(0.5) 在高分屏渲染成 0.5px,颜色取 iOS separator。 */
+.ios-hairline { position: relative; border: none; }
+.ios-hairline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: rgba(60, 60, 67, 0.16);
+  transform: scaleY(0.5);
+  transform-origin: bottom;
+}
+.ios-hairline--inset::after { left: 20px; }
+.ios-hairline--top::after { top: 0; bottom: auto; transform-origin: top; }
+
+/* Level 1 卡片 = iOS 风白卡:20px 连续圆角 + 更柔更散的浮起阴影(全站生效)。
+   .app-dark .card-level-1 特异性(0,2,0)> rounded-xl/lg(0,1,0),半径会覆盖内联的 rounded-*。 */
 .app-dark .card-level-1 {
-  background-color: #0f172a;
-  border: 1px solid #1e293b;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
-/* 玻璃面板:仅用于需要"浮起"语义的容器 */
+/* 玻璃面板:白色半透明 + 柔和阴影 */
 .app-dark .glass-panel {
-  background: rgba(19, 27, 46, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(70, 69, 84, 0.4);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* 置信度药丸:Emerald(高)/ Slate(中)/ Amber(低) */
-.app-dark .confidence-high { background-color: rgba(16, 185, 129, 0.15); color: #10b981; }
-.app-dark .confidence-med { background-color: #475569; color: #ffffff; }
-.app-dark .confidence-low { background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+/* 置信度药丸(浅底版):高=绿 / 中=灰 / 低=琥珀 / 推断=紫 */
+.app-dark .confidence-high { background-color: rgba(46, 125, 91, 0.12); color: #1e6b48; }
+.app-dark .confidence-med { background-color: #e7e8e9; color: #444748; }
+.app-dark .confidence-low { background-color: rgba(180, 83, 9, 0.12); color: #9a4407; }
+/* 推断 = 紫:把 AI 估计项与查实项视觉隔离(PRD §7.5 / §9.3) */
+.app-dark .confidence-inferred { background-color: rgba(124, 92, 214, 0.14); color: #6d4fc4; }
 
-/* 采集态:Indigo 脉冲环(Data Gathering) */
+/* 入场动效:fadeInUp + stagger 延迟(Aura 招牌进场) */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.stagger-1 { animation-delay: 0.08s; }
+.stagger-2 { animation-delay: 0.16s; }
+.stagger-3 { animation-delay: 0.24s; }
+.stagger-4 { animation-delay: 0.32s; }
+.stagger-5 { animation-delay: 0.40s; }
+.stagger-6 { animation-delay: 0.48s; }
+
+/* 运行态微光条(浅色 shimmer 背景) */
+@keyframes shimmer-move { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.shimmer-bg {
+  background: linear-gradient(90deg, rgba(231, 232, 233, 0.35) 25%, rgba(243, 244, 245, 0.7) 50%, rgba(231, 232, 233, 0.35) 75%);
+  background-size: 200% 100%;
+  animation: shimmer-move 2.5s infinite linear;
+}
+
+/* 采集态:脉冲环(Data Gathering,浅灰) */
 @keyframes ring-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(73, 75, 214, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(73, 75, 214, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(73, 75, 214, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(93, 95, 95, 0.28); }
+  70% { box-shadow: 0 0 0 10px rgba(93, 95, 95, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(93, 95, 95, 0); }
 }
 .app-dark .pulse-ring { animation: ring-pulse 2s infinite; border-radius: 50%; }
 
-/* 推理态:卡片边缘 shimmer 流光 */
+/* 推理态:卡片边缘 shimmer 流光(浅色) */
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .app-dark .shimmer-border { position: relative; }
 .app-dark .shimmer-border::before {
   content: '';
   position: absolute;
   inset: -1px;
-  background: linear-gradient(90deg, transparent, rgba(78, 222, 163, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(46, 125, 91, 0.35), transparent);
   background-size: 200% 100%;
   border-radius: inherit;
   z-index: -1;

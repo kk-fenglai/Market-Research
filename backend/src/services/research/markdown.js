@@ -1,5 +1,6 @@
 // 把结构化报告渲染成可带走的 Markdown。从原 lib/reportMarkdown.ts 移植。
-const CONF = { high: '高', medium: '中', low: '低' };
+const CONF = { high: '高', medium: '中', low: '低', inferred: '推断' };
+const SATURATION = { crowded: '🔴 拥挤', contested: '🟡 竞争', open: '🟢 空白' };
 const TMPL = {
   generic: '通用', b2b_saas: 'B2B SaaS', consumer: '消费品', marketplace: '双边市场',
   ai_tool: 'AI 工具/应用', dev_tool: '开发者工具', content_media: '内容/媒体', education: '教育培训',
@@ -21,6 +22,44 @@ function sources(citations) {
   return ['', '**来源:**', ...citations.map((c) => `- ${c}`)];
 }
 
+const cell = (s) => String(s ?? '—').replace(/\|/g, '\\|').replace(/\n+/g, ' ');
+
+// 差异化规格对比矩阵:行=竞品,列=价格/形态/目标人群 + 规格项并集。
+// 推断项(confidence=inferred)在值后加「※推断」标记,与查实项视觉隔离(PRD §9.3)。
+function specMatrix(competitors) {
+  const withSpecs = competitors.filter((c) => c.specs?.length);
+  if (!withSpecs.length) return [];
+  const specNames = [];
+  for (const c of competitors) for (const s of c.specs ?? []) if (!specNames.includes(s.name)) specNames.push(s.name);
+  const cols = ['竞品', '直接竞品', '价格', '形态', '目标人群', ...specNames];
+  const L = ['', '### 差异化对比矩阵', '', `| ${cols.join(' | ')} |`, `| ${cols.map(() => '---').join(' | ')} |`];
+  for (const c of competitors) {
+    const byName = new Map((c.specs ?? []).map((s) => [s.name, s]));
+    const specCells = specNames.map((n) => {
+      const s = byName.get(n);
+      if (!s) return '—';
+      return cell(s.confidence === 'inferred' ? `${s.value} ※推断` : s.value);
+    });
+    const row = [
+      cell(c.name), c.isDirect ? '✓' : '', cell(c.pricing),
+      cell(c.formFactor || '—'), cell(c.targetUser || '—'), ...specCells,
+    ];
+    L.push(`| ${row.join(' | ')} |`);
+  }
+  L.push('', '> ※推断 = 非官方查实、从公开信息推断(如竞品内部用料),仅供参考。');
+  return L;
+}
+
+// 使用场景地图:每个场景的饱和度 + 谁在打;末尾列出缺口(差异化切口候选)。
+function scenarioMapSection(s) {
+  const L = ['', '## 使用场景地图', '', '| 场景 | 饱和度 | 在打的产品 | 说明 |', '| --- | --- | --- | --- |'];
+  for (const sc of s.scenarios)
+    L.push(`| ${cell(sc.name)} | ${SATURATION[sc.saturation] ?? sc.saturation} | ${cell(sc.servedBy?.length ? sc.servedBy.join('、') : '—')} | ${cell(sc.note || '—')} |`);
+  L.push(...bullets('市场缺口 / 差异化切口候选', s.gaps));
+  L.push('', s.summary, ...sources(s.citations));
+  return L;
+}
+
 function reportToMarkdown(r) {
   const L = [];
   L.push(`# 市场调研报告:${r.productName}`);
@@ -31,7 +70,7 @@ function reportToMarkdown(r) {
     L.push('');
     L.push(
       `_数据采集于 ${new Date(r.meta.dataCollectedAt).toLocaleDateString('zh-CN')} · ` +
-      `整体置信度 ${CONF[r.meta.overallConfidence]} · ${r.meta.sourcedModuleCount}/4 模块带来源 · ` +
+      `整体置信度 ${CONF[r.meta.overallConfidence]} · ${r.meta.sourcedModuleCount}/${r.meta.moduleCount ?? 4} 模块带来源 · ` +
       `模板 ${TMPL[r.meta.template] ?? r.meta.template} · 方法论 v${r.meta.methodologyVersion}_`
     );
   }
@@ -56,9 +95,17 @@ function reportToMarkdown(r) {
   }
 
   if (r.competitors) {
-    L.push('', '## 竞品分析', '', '| 竞品 | 月费(USD) | 定价 | 核心功能 | 用户抱怨点 |', '| --- | --- | --- | --- | --- |');
+    L.push('', '## 竞品分析', '', '| 竞品 | 官网 | 月费(USD) | 定价 | 核心功能 | 用户抱怨点 |', '| --- | --- | --- | --- | --- | --- |');
     for (const c of r.competitors.competitors)
-      L.push(`| ${c.name} | ${c.monthlyPriceUsd ?? '—'} | ${c.pricing} | ${c.features.join('、')} | ${c.complaints?.length ? c.complaints.join(';') : '—'} |`);
+      L.push(`| ${c.name} | ${c.website ? `[官网](${c.website})` : '—'} | ${c.monthlyPriceUsd ?? '—'} | ${c.pricing} | ${c.features.join('、')} | ${c.complaints?.length ? c.complaints.join(';') : '—'} |`);
+    // 硬件:差异化对比矩阵(规格/形态/目标人群,含推断标注)
+    L.push(...specMatrix(r.competitors.competitors));
+    // 每个竞品的产品分析(逐条)
+    const withAnalysis = r.competitors.competitors.filter((c) => c.productAnalysis);
+    if (withAnalysis.length) {
+      L.push('', '### 各竞品产品分析');
+      for (const c of withAnalysis) L.push('', `**${c.name}** — ${c.productAnalysis}`);
+    }
     L.push('', r.competitors.summary, ...sources(r.competitors.citations));
   }
 
@@ -79,6 +126,8 @@ function reportToMarkdown(r) {
   if (r.trend) {
     L.push('', '## 搜索趋势', '', `整体走势:${r.trend.direction}`, '', r.trend.growthSummary, ...sources(r.trend.citations));
   }
+
+  if (r.scenarioMap) L.push(...scenarioMapSection(r.scenarioMap));
 
   if (r.barrier) {
     L.push('', '## 进入壁垒', '', `整体难度:${r.barrier.overallDifficulty}`, '');

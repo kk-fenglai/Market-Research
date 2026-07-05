@@ -176,7 +176,7 @@ router.post('/login', async (req, res, next) => {
       data: { userId: user.id, ip, userAgent: ua, success: true, reason: 'OK' },
     });
 
-    const safe = { id: user.id, email: user.email, name: user.name, plan: user.plan };
+    const safe = { id: user.id, email: user.email, name: user.name, plan: user.plan, role: user.role };
     const accessToken = signAccessToken({ userId: user.id, plan: user.plan });
     const { raw: refreshToken } = await issueRefreshToken({
       userId: user.id,
