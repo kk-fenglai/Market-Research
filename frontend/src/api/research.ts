@@ -126,6 +126,84 @@ export async function deleteProject(id: string): Promise<void> {
   await api.delete(`/research/${id}`);
 }
 
+// ───────────────────────  AI 改写(提案 → 应用 → 回滚)  ───────────────────────
+
+/** 可被 AI 改写的报告分区 key,与后端 services/research/revise.js 的 REVISABLE 对齐。 */
+export type RevisableSection =
+  | 'marketSize' | 'competitors' | 'userProfile' | 'trend' | 'scenarioMap' | 'barrier' | 'conclusion';
+
+export const SECTION_LABELS: Record<RevisableSection, string> = {
+  marketSize: '市场规模',
+  competitors: '竞品分析',
+  userProfile: '用户画像',
+  trend: '搜索趋势',
+  scenarioMap: '使用场景地图',
+  barrier: '进入壁垒',
+  conclusion: '综合结论',
+};
+
+export interface RevisionProposal {
+  revisionId: string;
+  section: RevisableSection;
+  label: string;
+  instruction: string;
+  before: unknown;
+  after: unknown;
+  /** append = 只生成新条目再追加(原有内容零改动);rewrite = 整个分区重写。 */
+  mode: 'append' | 'rewrite';
+  /** append 模式下新增的条目名。 */
+  added: string[];
+  /** AI 重写时丢掉、且指令里未提及的条目 —— 已由后端自动补回,仅作告知。 */
+  restored: { field: string; items: string[] }[];
+  /** 补回后仍缺失的条目(名字在指令里出现过,可能是有意删除),需用户确认后再应用。 */
+  warnings: { field: string; dropped: string[] }[];
+  createdAt: string;
+}
+
+export interface RevisionListItem {
+  id: string;
+  section: RevisableSection;
+  label: string;
+  instruction: string;
+  status: 'proposed' | 'applied' | 'discarded' | 'rolled_back';
+  createdAt: string;
+  appliedAt: string | null;
+}
+
+// 模型重写整个分区要 60~90s,远超 client.ts 的 15s 全局超时。
+// 只给这一个调用放宽,不动全局(否则普通接口出错要吊死 3 分钟)。
+const REVISE_TIMEOUT_MS = 180_000;
+
+/** 让 AI 生成分区改写提案(不写回报告,需再调 applyRevision 才生效)。 */
+export async function proposeRevision(
+  id: string,
+  input: { section: RevisableSection; instruction: string; plan?: ResearchPlan }
+): Promise<RevisionProposal> {
+  const { data } = await api.post(`/research/${id}/revise`, input, { timeout: REVISE_TIMEOUT_MS });
+  return data;
+}
+
+export async function listRevisions(id: string): Promise<RevisionListItem[]> {
+  const { data } = await api.get(`/research/${id}/revisions`);
+  return data.revisions;
+}
+
+/** 应用提案,返回写回后的完整报告。 */
+export async function applyRevision(id: string, revisionId: string): Promise<ResearchReport> {
+  const { data } = await api.post(`/research/${id}/revisions/${revisionId}/apply`);
+  return data.result;
+}
+
+/** 回滚一次已应用的改写,返回回滚后的完整报告。 */
+export async function rollbackRevision(id: string, revisionId: string): Promise<ResearchReport> {
+  const { data } = await api.post(`/research/${id}/revisions/${revisionId}/rollback`);
+  return data.result;
+}
+
+export async function discardRevision(id: string, revisionId: string): Promise<void> {
+  await api.delete(`/research/${id}/revisions/${revisionId}`);
+}
+
 // 导出 Markdown:用 axios(带 Bearer)取 blob,再触发下载。
 export async function exportMarkdown(id: string): Promise<void> {
   const { data } = await api.get(`/research/${id}/export`, { params: { format: 'md' }, responseType: 'blob' });

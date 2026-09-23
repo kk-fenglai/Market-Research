@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { btn } from '../components/research/dark';
+import ReportAssistant from '../components/research/ReportAssistant';
 import CostPanel from './research/CostPanel';
 import {
   ExecutiveSummary, ScoreBreakdown, PainPoints, MarketSizing, TrendPanel,
@@ -12,6 +13,7 @@ import {
 import {
   getStatus, getResult, exportMarkdown, startResearch,
   type ResearchReport, type CostInputs, type StatusResp, type StepView, type ResearchPlan,
+  type RevisableSection,
 } from '../api/research';
 
 const POLL_MS = 2000;
@@ -49,19 +51,30 @@ export default function ProjectWorkspace() {
     return () => { cancelled = true; if (timer.current) clearInterval(timer.current); };
   }, [id]);
 
+  // AI 改写落库后:除了换掉报告本身,还要重取 status —— 结论分区会改总分,
+  // 而轮询在 completed 后已停,不重取的话顶部评分会停留在旧值。
+  async function onReportChange(next: ResearchReport) {
+    setReport(next);
+    try { setStatus(await getStatus(id)); } catch { /* 分数刷新失败不影响已更新的报告正文 */ }
+  }
+
   return (
     <div className="mx-auto max-w-7xl">
-      <Body status={status} report={report} costInputs={costInputs} error={error} reportId={id} />
+      <Body
+        status={status} report={report} costInputs={costInputs} error={error} reportId={id}
+        onReportChange={onReportChange}
+      />
     </div>
   );
 }
 
-function Body({ status, report, costInputs, error, reportId }: {
+function Body({ status, report, costInputs, error, reportId, onReportChange }: {
   status: StatusResp | null;
   report: ResearchReport | null;
   costInputs: CostInputs | null;
   error: string | null;
   reportId: string;
+  onReportChange: (r: ResearchReport) => void;
 }) {
   if (error) {
     return (
@@ -89,7 +102,10 @@ function Body({ status, report, costInputs, error, reportId }: {
         {/* 结论前置:verdict + 关键指标常驻顶部,先给判断再给数据(PRD §7.5 原则2)。 */}
         <VerdictCard report={report} score={status.score} />
         <KeyMetrics report={report} />
-        <Workspace report={report} score={status.score} reportId={reportId} costInputs={costInputs} />
+        <Workspace
+          report={report} score={status.score} reportId={reportId} costInputs={costInputs}
+          onReportChange={onReportChange}
+        />
         <ConfidenceLegend />
       </>
     );
@@ -110,8 +126,20 @@ const ALL_SECTIONS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'conclusion', label: 'Conclusion', icon: 'flag' },
 ];
 
-function Workspace({ report, score, reportId, costInputs }: {
+// 工作台分区 → 可被 AI 改写的报告分区。AI 助手据此预选要改的分区。
+// overview 落到结论(执行摘要/评分都源自它);pricing 落到竞品(定价情报由竞品价格推导)。
+const SECTION_TO_REVISABLE: Record<SectionId, RevisableSection> = {
+  overview: 'conclusion',
+  market: 'marketSize',
+  competitors: 'competitors',
+  scenarios: 'scenarioMap',
+  pricing: 'competitors',
+  conclusion: 'conclusion',
+};
+
+function Workspace({ report, score, reportId, costInputs, onReportChange }: {
   report: ResearchReport; score: number | null; reportId: string; costInputs: CostInputs | null;
+  onReportChange: (r: ResearchReport) => void;
 }) {
   const [active, setActive] = useState<SectionId>('overview');
   // Scenarios 分区为硬件专属:仅当报告含使用场景地图时显示。
@@ -165,6 +193,13 @@ function Workspace({ report, score, reportId, costInputs }: {
           <DataSources report={report} />
         </Section>
       </div>
+
+      <ReportAssistant
+        reportId={reportId}
+        report={report}
+        activeSection={SECTION_TO_REVISABLE[active]}
+        onReportChange={onReportChange}
+      />
     </div>
   );
 }

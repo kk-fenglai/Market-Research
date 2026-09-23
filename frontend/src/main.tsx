@@ -10,6 +10,18 @@ import { useTranslation } from 'react-i18next';
 import App from './App';
 import { apiOrigin } from './api/baseUrl';
 import './i18n';
+// 本地自托管字体（替代 Google Fonts，避免网络不通时图标/字体乱码）
+import 'material-symbols/outlined.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/hanken-grotesk/400.css';
+import '@fontsource/hanken-grotesk/500.css';
+import '@fontsource/hanken-grotesk/600.css';
+import '@fontsource/hanken-grotesk/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
 import './styles/index.css';
 
 const apiOriginUrl = apiOrigin();

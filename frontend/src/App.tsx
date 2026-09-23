@@ -103,6 +103,7 @@ export default function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/library" element={<Library />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/chat/:conversationId" element={<Chat />} />
           <Route path="/research/new" element={<ResearchNew />} />
           <Route path="/research/compare" element={<ResearchCompare />} />
           <Route path="/research/:id" element={<ProjectWorkspace />} />

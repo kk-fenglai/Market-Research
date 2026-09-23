@@ -1,0 +1,36 @@
+// ════════════════════════════════════════════════════════════════════════════
+// 业务模块:Ask AI 对话历史 (chat)
+// 一次会话 = ChatConversation;每条问答落一行 ChatMessage(含引用/作答引擎)。
+// 换业务时:删本文件 + 删 00-core.prisma User 上的 chatConversations 关系。
+// ════════════════════════════════════════════════════════════════════════════
+
+model ChatConversation {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String        // 首条用户提问截断而来,可重命名
+  // 非空 = 绑定到某份调研报告的「报告问答」(提问时把该报告作为上下文喂给模型);
+  // 为空 = 通用 Ask AI。两者在各自页面分开列出。
+  reportId  String?
+  report    ResearchReport? @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt // 每次追加消息时显式刷新,用于列表排序
+
+  messages  ChatMessage[]
+
+  @@index([userId, updatedAt(sort: Desc)])
+  @@index([reportId, updatedAt(sort: Desc)])
+}
+
+model ChatMessage {
+  id             String           @id @default(cuid())
+  conversationId String
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String           // user | assistant
+  content        String
+  provider       String?          // 作答引擎:deepseek | perplexity(仅 assistant)
+  citations      Json?            // string[] 来源链接(仅 perplexity 联网作答)
+  createdAt      DateTime         @default(now())
+
+  @@index([conversationId, createdAt])
+}

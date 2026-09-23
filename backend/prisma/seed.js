@@ -47,12 +47,12 @@ async function main() {
     return;
   }
 
-  const demoPwd = await bcrypt.hash('demo1234', 12);
+  const demoPwd = await bcrypt.hash('Test1234', 12);
   await prisma.user.upsert({
-    where: { email: 'demo@example.com' },
-    update: { emailVerified: true },
+    where: { email: 't@t.com' },
+    update: { emailVerified: true, passwordHash: demoPwd },
     create: {
-      email: 'demo@example.com',
+      email: 't@t.com',
       passwordHash: demoPwd,
       name: '演示用户',
       plan: 'STANDARD',
@@ -62,7 +62,7 @@ async function main() {
   });
   await prisma.user.upsert({
     where: { email: 'free@example.com' },
-    update: { emailVerified: true },
+    update: { emailVerified: true, passwordHash: demoPwd },
     create: {
       email: 'free@example.com',
       passwordHash: demoPwd,
@@ -75,8 +75,8 @@ async function main() {
 
   console.log('🎉 Seed complete!');
   console.log('Test accounts:');
-  console.log('  demo@example.com / demo1234  (标准版)');
-  console.log('  free@example.com / demo1234  (免费版)');
+  console.log('  t@t.com / Test1234  (标准版)');
+  console.log('  free@example.com / Test1234  (免费版)');
 }
 
 main()

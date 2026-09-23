@@ -33,8 +33,28 @@ model ResearchReport {
   completedAt  DateTime?
 
   steps        ResearchStep[]
+  revisions    ReportRevision[]
+  chats        ChatConversation[] // 绑定在本报告上的 AI 问答(见 91-business-chat.prisma)
 
   @@index([userId, createdAt(sort: Desc)])
+}
+
+/// AI 改写提案 / 版本history。
+/// 流程:AI 生成 → 落一行 proposed(不动 result)→ 用户确认 applied 才写回 result。
+/// before 保存改前的该分区内容,回滚即把 before 写回。
+model ReportRevision {
+  id          String         @id @default(cuid())
+  reportId    String
+  report      ResearchReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  section     String         // 报告分区 key:marketSize | competitors | userProfile | trend | scenarioMap | barrier | conclusion
+  instruction String         // 用户的改写指令
+  status      String         @default("proposed") // proposed | applied | discarded | rolled_back
+  before      Json?          // 改前内容(该分区原值;分区原本为空时为 null)
+  after       Json           // AI 生成的新内容(已过 zod 校验)
+  createdAt   DateTime       @default(now())
+  appliedAt   DateTime?
+
+  @@index([reportId, createdAt(sort: Desc)])
 }
 
 model ResearchStep {
